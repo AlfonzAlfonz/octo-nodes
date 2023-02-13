@@ -13,7 +13,7 @@ const nodeTypes = {
 };
 
 export const NodeEditor: FC = () => {
-  const [nodesCtx, setNodes] = useNodes();
+  const [nodesCtx] = useNodes();
   const [dataCtx, setData] = useNodeData();
   const [stateCtx, setState] = useNodeState();
 

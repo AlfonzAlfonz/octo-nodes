@@ -1,5 +1,5 @@
 import { FormLabel, Input as FormInput } from "@mui/joy";
-import { intType, numberType, stringType } from "components/SVGRenderer/args";
+import { intType, numberType, stringType, tupleType, ArgType } from "components/SVGRenderer/args";
 import { ArgDeclaration, ArgValue } from "model";
 import { Dispatch, FC } from "react";
 
@@ -14,10 +14,10 @@ export const ArgumentInput: FC<Props> = (p) => {
   return (
     <>
       {[
-        (p.argDeclaration.type === intType || p.argDeclaration.type === numberType) &&
-          <NumberInput {...p} argDeclaration={p.argDeclaration as ArgDeclaration<number>} />,
-        p.argDeclaration.type === stringType &&
-          <TextInput {...p} argDeclaration={p.argDeclaration as ArgDeclaration<string>} />
+        isNumberType(p.argDeclaration) && <NumberInput {...p} argDeclaration={p.argDeclaration} />,
+        isStringType(p.argDeclaration) && <TextInput {...p} argDeclaration={p.argDeclaration} />
+        // isTuppleType(p.argDeclaration) &&
+        //   <TextInput {...p} argDeclaration={p.argDeclaration} />
       ].find(Boolean) ?? <FormLabel>{p.argDeclaration.name}</FormLabel>}
     </>
   );
@@ -51,3 +51,7 @@ const NumberInput: FC<Props & { argDeclaration: ArgDeclaration<number> }> = ({ v
     />
   );
 };
+
+const isNumberType = (a: ArgDeclaration): a is ArgDeclaration<number> => a.type === intType || a.type === numberType;
+const isStringType = (a: ArgDeclaration): a is ArgDeclaration<string> => a.type === stringType;
+const isTuppleType = (a: ArgDeclaration): a is ArgDeclaration<ArgType<unknown>[]> => a.type === tupleType as any;

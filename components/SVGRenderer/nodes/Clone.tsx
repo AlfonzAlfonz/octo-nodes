@@ -6,7 +6,7 @@ export const Clone = nodeDeclaration({
   name: "Clone",
   args: [
     { type: renderableType, name: "Input" },
-    { type: intType, name: "#", defaultValue: 5 },
+    { type: intType, name: "#", defaultValue: 50 },
     { type: numberType, name: "Y", defaultValue: 25 }
   ],
   returns: [{ type: renderableType, name: "Output" }],
