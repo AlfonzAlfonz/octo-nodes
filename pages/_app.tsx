@@ -5,7 +5,7 @@ import Head from "next/head";
 
 export default function App ({ Component, pageProps }: AppProps) {
   return (
-    <CssVarsProvider>
+    <CssVarsProvider defaultMode="dark">
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
