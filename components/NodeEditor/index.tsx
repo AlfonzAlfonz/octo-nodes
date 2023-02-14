@@ -1,7 +1,7 @@
 import "reactflow/dist/style.css";
 
 import { styled } from "@mui/joy";
-import { ArgRef } from "model";
+import { ArgRef, getNewId } from "model";
 import { FC, useCallback, useMemo } from "react";
 import ReactFlow, { Background, Controls, Edge, MiniMap, Node, OnConnect, OnEdgesChange, OnNodesChange } from "reactflow";
 
@@ -70,7 +70,7 @@ export const NodeEditor: FC = () => {
     if (!source || !sourceHandle || !target || !targetHandle) return;
     setData((data) => [
       ...data.filter(d => !(`${d.to[0]}` === target && `${d.to[1]}` === targetHandle)),
-      { from: [+source, +sourceHandle], to: [+target, +targetHandle] } as ArgRef
+      { id: getNewId(data), from: [+source, +sourceHandle], to: [+target, +targetHandle] } as ArgRef
     ]);
   }, [setData]);
 
