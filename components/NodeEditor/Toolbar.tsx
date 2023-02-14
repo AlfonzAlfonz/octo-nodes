@@ -1,7 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import ScreenRotationAltIcon from "@mui/icons-material/ScreenRotationAlt";
 import { Box, IconButton, Menu, MenuItem, Stack } from "@mui/joy";
-import { Clone, Image, Input, Text } from "components/SVGRenderer/nodes";
+import { Clone, Combine, Image, Input, Text } from "components/SVGRenderer/nodes";
 import { addNode, NodeDeclaration } from "model";
 import { FC, useState } from "react";
 
@@ -52,6 +52,7 @@ export const Toolbar: FC = () => {
         <MenuItem onClick={addInput(Text)}>Text</MenuItem>
         <MenuItem onClick={addInput(Clone)}>Clone</MenuItem>
         <MenuItem onClick={addInput(Image)}>Image</MenuItem>
+        <MenuItem onClick={addInput(Combine)}>Combine</MenuItem>
       </Menu>
     </>
   );
