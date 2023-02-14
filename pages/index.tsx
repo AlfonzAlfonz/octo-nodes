@@ -1,15 +1,14 @@
-import { Box, Tab, TabList, TabPanel, Tabs } from "@mui/joy";
+import { Box } from "@mui/joy";
 import { Inputs } from "components/Inputs";
-import { DataProvider, NodesProvider, StateProvider } from "components/NodeContext";
+import { AppState, DataProvider, NodesProvider, StateProvider } from "components/NodeContext";
 import { NodeEditor } from "components/NodeEditor";
 import { SVGRenderer } from "components/SVGRenderer";
 import { Input, Output, Position, Text } from "components/SVGRenderer/nodes";
 import { Clone } from "components/SVGRenderer/nodes/Clone";
-import { addNode, addRef, addValue, NodeState } from "model";
+import { addNode, addRef, addValue } from "model";
 import { useEffect, useState } from "react";
 
 export default function Home () {
-  const [tab, setTab] = useState(1);
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(true), []);
 
@@ -29,7 +28,7 @@ export default function Home () {
 
     return n;
   });
-  const state = useState<Record<string, NodeState | undefined>>({});
+  const state = useState<AppState>({ tab: "nodes", nodes: {} });
 
   return (
     <NodesProvider value={nodes}>
@@ -37,18 +36,26 @@ export default function Home () {
         <StateProvider value={state}>
           <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "100vh" }}>
             <Box sx={{ minWidth: 0, display: "flex" }}>
-              <Tabs aria-label="Basic tabs" value={tab} sx={{ borderRadius: "lg", width: "100%" }}>
-                <TabList>
-                  <Tab onChange={() => setTab(0)}>Input</Tab>
-                  <Tab onChange={() => setTab(1)}>Nodes</Tab>
-                </TabList>
-                <TabPanel value={tab} sx={{ p: 2, display: tab === 0 ? "block" : "none" }}>
-                  <Inputs />
-                </TabPanel>
-                <TabPanel value={tab} sx={{ display: tab === 1 ? "block" : "none" }}>
-                  <NodeEditor />
-                </TabPanel>
-              </Tabs>
+              <Box
+                sx={{
+                  p: 2,
+                  display: state[0].tab === "inputs" ? "block" : "none",
+                  width: "100%",
+                  height: "100%"
+                }}
+              >
+                <Inputs />
+              </Box>
+              <Box
+                sx={{
+                  display: state[0].tab === "nodes" ? "block" : "none",
+                  width: "100%",
+                  height: "100%",
+                  position: "relative"
+                }}
+              >
+                <NodeEditor />
+              </Box>
             </Box>
             <Box sx={{ minWidth: 0 }}>
               {open && <SVGRenderer />}

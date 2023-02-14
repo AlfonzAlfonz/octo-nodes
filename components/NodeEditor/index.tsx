@@ -7,6 +7,7 @@ import ReactFlow, { Background, Controls, Edge, MiniMap, Node, OnConnect, OnEdge
 
 import { useNodeData, useNodes, useNodeState } from "../NodeContext";
 import { EditorNode } from "./EditorNode";
+import { Toolbar } from "./Toolbar";
 
 const nodeTypes = {
   default: EditorNode
@@ -21,7 +22,7 @@ export const NodeEditor: FC = () => {
     nodesCtx.map((n, i) => ({
       id: `${n.id}`,
       type: "default",
-      position: stateCtx[n.id]?.position ?? { x: 0, y: 0 },
+      position: stateCtx.nodes[n.id]?.position ?? { x: 0, y: 0 },
       data: n
     })),
   [nodesCtx, stateCtx]);
@@ -38,7 +39,10 @@ export const NodeEditor: FC = () => {
     for (const e of events) {
       switch (e.type) {
         case "position":
-          e.position && setState(state => ({ ...state, [e.id]: { ...state[e.id], position: e.position! } }));
+          e.position && setState(state => ({
+            ...state,
+            nodes: { ...state.nodes, [e.id]: { ...state.nodes[e.id], position: e.position! } }
+          }));
           break;
         case "dimensions": break;
         case "select": break;
@@ -71,18 +75,21 @@ export const NodeEditor: FC = () => {
   }, [setData]);
 
   return (
-    <StyledReactFlow
-      nodes={nodes}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-    >
-      <MiniMap />
-      <Controls />
-      <Background />
-    </StyledReactFlow>
+    <>
+      <Toolbar />
+      <StyledReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+      >
+        <MiniMap />
+        <Controls />
+        <Background />
+      </StyledReactFlow>
+    </>
   );
 };
 

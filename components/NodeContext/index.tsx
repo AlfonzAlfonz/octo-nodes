@@ -3,9 +3,14 @@ import { createContext, Dispatch, SetStateAction, useContext } from "react";
 
 type ContextValue<T> = [T, Dispatch<SetStateAction<T>>];
 
+export interface AppState {
+  tab: "inputs" | "nodes";
+  nodes: Record<string, NodeState | undefined>;
+}
+
 const _NodesContext = createContext<ContextValue<NodeModel[]>>(null!);
 const _DataContext = createContext<ContextValue<Arg[]>>(null!);
-const _StateContext = createContext<ContextValue<Record<string, NodeState | undefined>>>(null!);
+const _StateContext = createContext<ContextValue<AppState>>(null!);
 
 export const useNodes = () => useContext(_NodesContext);
 export const useNodeData = () => useContext(_DataContext);
