@@ -28,17 +28,17 @@ export const Toolbar: FC = () => {
   return (
     <>
       <Stack
-        sx={{ position: "absolute", p: 2, width: "100%", left: 0, top: 0, zIndex: 100 }}
+        sx={{ position: "absolute", p: 2, width: "100%", left: 0, top: 0, zIndex: 100, pointerEvents: "none" }}
         spacing={1}
         direction="row"
       >
-        <IconButton onClick={() => setTab("inputs")}>
+        <IconButton onClick={() => setTab("inputs")} sx={{ pointerEvents: "auto" }}>
           <ScreenRotationAltIcon />
         </IconButton>
 
         <Box my={3} />
 
-        <IconButton onClick={handleClick}>
+        <IconButton onClick={handleClick} sx={{ pointerEvents: "auto" }}>
           <AddIcon />
         </IconButton>
       </Stack>

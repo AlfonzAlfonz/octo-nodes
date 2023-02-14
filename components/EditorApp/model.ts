@@ -1,7 +1,6 @@
 import { DependencyList, Dispatch, EffectCallback, SetStateAction } from "react";
 
 import { ArgType } from "./SVGRenderer/args";
-import * as nodes from "./SVGRenderer/nodes";
 
 export type Arg<T extends unknown = unknown> = {
   type: ArgType<T>;
@@ -28,8 +27,6 @@ export type NodeDeclaration<
     : { -readonly [K in keyof TReturns]: ArgTypeType<TReturns[K]["type"]> };
 };
 
-export type NodeEffectCallback = (setState: (v: any) => unknown) => void | (() => void);
-
 export const nodeDeclaration = <
   const TArgs extends readonly Arg[],
   const TReturns extends readonly Arg[]
@@ -47,5 +44,3 @@ export interface NodeModel {
 }
 
 type ArgTypeType<T extends ArgType> = T extends ArgType<infer U> ? U : never;
-
-export const nodeDeclarations = Object.fromEntries(Object.values(nodes).map(n => [n.id, n]));

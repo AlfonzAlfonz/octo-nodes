@@ -1,10 +1,10 @@
 import { nodeDeclaration } from "../../model";
-import { renderableType, stringType } from "../args";
+import { renderableType } from "../args";
 
 export const Text = nodeDeclaration({
   id: "text",
   name: "Text",
-  args: [{ type: stringType, name: "Text" }],
+  args: [{ type: renderableType, name: "Text" }],
   returns: [
     { type: renderableType, name: "Output" }
   ],
