@@ -4,36 +4,38 @@ import { styled } from "@mui/joy";
 import { FC, useCallback, useMemo } from "react";
 import ReactFlow, { Background, Controls, Edge, MiniMap, Node, OnConnect, OnEdgesChange, OnNodesChange } from "reactflow";
 
-import { useMutate, useNodePosition, useNodes, useRefs } from "../NodeContext";
+import { useArgValues, useMutate, useNodePosition, useNodes } from "../NodeContext";
 import { EditorNode } from "./EditorNode";
+import { InputNode } from "./InputNode";
 import { Toolbar } from "./Toolbar";
 
 const nodeTypes = {
-  default: EditorNode
+  default: EditorNode,
+  input: InputNode
 };
 
 export const NodeEditor: FC = () => {
   const nodesCtx = useNodes();
-  const dataCtx = useRefs();
+  const dataCtx = useArgValues();
   const nodePosition = useNodePosition();
   const { addRef, removeRef, moveNode } = useMutate();
 
   const nodes = useMemo<Node[]>(() =>
     nodesCtx.map((n, i) => ({
       id: `${n.id}`,
-      type: "default",
+      type: n.type.id === "input" ? "input" : "default",
       position: nodePosition[n.id] ?? { x: 0, y: 0 },
       data: n
     })),
   [nodesCtx, nodePosition]);
 
-  const edges = useMemo<Edge[]>(() => dataCtx.map((d, i) => ({
+  const edges = useMemo<Edge[]>(() => dataCtx.map((d, i) => "id" in d ? {
     id: `${i}`,
     source: `${d.from[0]}`,
     sourceHandle: `${d.from[1]}`,
     target: `${d.to[0]}`,
     targetHandle: `${d.to[1]}`
-  })).filter(Boolean), [dataCtx]);
+  } : null!).filter(Boolean), [dataCtx]);
 
   const onNodesChange = useCallback<OnNodesChange>((events) => {
     for (const e of events) {
@@ -88,7 +90,7 @@ export const NodeEditor: FC = () => {
 };
 
 const StyledReactFlow = styled(ReactFlow)`
-  .react-flow__node-default {
+  .react-flow__node-default, .react-flow__node-input {
     background: transparent;
     color: inherit;
     padding: 0;

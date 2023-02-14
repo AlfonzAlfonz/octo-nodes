@@ -1,22 +1,22 @@
 import { DependencyList, EffectCallback } from "react";
 
-import { NodeModel, NodeReference } from "../model";
+import { NodeModel, ArgReference } from "../model";
 import { useMutate } from "../NodeContext";
 import { areHookInputsEqual, validateValue } from "../utils";
 
 export const renderNode = (
   nodes: NodeModel[],
-  refs: NodeReference[],
+  refs: ArgReference[],
   prevEffectList: Map<number, [ReturnType<EffectCallback>, DependencyList]>,
-  nodeState: Record<string, unknown>,
+  nodeState: Record<string, { value: unknown }>,
   setNodeState: ReturnType<typeof useMutate>["setNodeState"],
   node: NodeModel
 ): unknown[] => {
   const evaluatedArgs = node.type.args.map((argDeclaration, i) => {
-    const arg = refs.find(a => a.to[0] === node.id && a.to[1] === i);
-    const value = !arg ? undefined : "value" in arg
-      ? arg.value
-      : renderNode(nodes, refs, prevEffectList, nodeState, setNodeState, nodes.find(n => n.id === arg.from[0])!)[arg.from[1]];
+    const ref = refs.find(a => a.to[0] === node.id && a.to[1] === i);
+    const value = !ref ? undefined : "value" in ref
+      ? ref.value
+      : renderNode(nodes, refs, prevEffectList, nodeState, setNodeState, nodes.find(n => n.id === ref.from[0])!)[ref.from[1]];
 
     return validateValue(argDeclaration, value) ?? null;
   });
@@ -27,9 +27,11 @@ export const renderNode = (
     useEffect: (...e) => {
       effect = e;
     },
-    useState: <T extends unknown>(initialValue?: T) =>
+    useState: <T extends unknown>(initialValue?: T) => {
+      const state = nodeState[node.id];
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      [nodeState[node.id] as T ?? initialValue!, x => setNodeState(node.id, x)]
+      return [state ? state.value as T : initialValue!, x => setNodeState(node.id, x)];
+    }
   });
 
   const prevEffect = prevEffectList.get(node.id);

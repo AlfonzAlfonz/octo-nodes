@@ -2,7 +2,7 @@ import { Box } from "@mui/joy";
 import { Inputs } from "components/EditorApp/Inputs";
 import { FC, useEffect, useState } from "react";
 
-import { RefsProvider, MutateProvider, NodesProvider, NodePositionProvider, NodeStateProvider } from "./NodeContext";
+import { ArgValueProvider, MutateProvider, NodesProvider, NodePositionProvider, NodeStateProvider } from "./NodeContext";
 import { NodeEditor } from "./NodeEditor";
 import { useEditorAppState } from "./state";
 import { SVGRenderer } from "./SVGRenderer";
@@ -21,7 +21,7 @@ export const EditorApp: FC = () => {
   return (
     <MutateProvider value={mutate}>
       <NodesProvider value={state.nodes}>
-        <RefsProvider value={state.refs}>
+        <ArgValueProvider value={state.argValues}>
           <NodeStateProvider value={state.nodeState}>
             <NodePositionProvider value={state.nodePosition}>
               <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "100vh" }}>
@@ -53,7 +53,7 @@ export const EditorApp: FC = () => {
               </Box>
             </NodePositionProvider>
           </NodeStateProvider>
-        </RefsProvider>
+        </ArgValueProvider>
       </NodesProvider>
     </MutateProvider>
 

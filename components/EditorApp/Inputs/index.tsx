@@ -21,7 +21,7 @@ export const Inputs: FC = () => {
         <FormControl key={n.id}>
           <FormLabel>Input</FormLabel>
           <FormInput
-            value={nodeState[n.id] as string}
+            value={nodeState[n.id]?.value as string ?? ""}
             onChange={e => setNodeState(n.id, e.target.value)}
           />
         </FormControl>

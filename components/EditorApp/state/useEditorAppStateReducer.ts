@@ -1,14 +1,14 @@
 import { Reducer, useReducer } from "react";
 
-import { NodeReference, Arg, NodeDeclaration, NodeModel } from "../model";
+import { Arg, ArgValue, NodeDeclaration, NodeModel } from "../model";
 import { Clone, Input, Output, Position, Text } from "../SVGRenderer/nodes";
 
 export type AppState = {
   state: {
     nodes: NodeModel[];
-    refs: NodeReference[];
+    argValues: ArgValue[];
     nodePosition: Record<string, { x: number; y: number }>;
-    nodeState: Record<string, unknown>;
+    nodeState: Record<string, { value: unknown }>;
   };
 
   tab: "inputs" | "nodes";
@@ -20,6 +20,7 @@ export type AppStateAction =
   | { action: "setNodeState"; id: number; state: unknown }
   | { action: "addRef"; from: [id: number, index: number]; to: [id: number, index: number] }
   | { action: "removeRef"; id: number }
+  | { action: "setValue"; value: unknown; to: [id: number, index: number]}
   | { action: "setTab"; tab: "inputs" | "nodes" };
 
 export const useEditorAppStateReducer = () =>
@@ -37,14 +38,14 @@ export const useEditorAppStateReducer = () =>
           ...state,
           state: {
             ...state.state,
-            refs: addRef(state.state.refs, action.from, action.to)
+            argValues: addRef(state.state.argValues, action.from, action.to)
           }
         };
         case "removeRef": return {
           ...state,
           state: {
             ...state.state,
-            refs: state.state.refs.filter(a => a.id === action.id)
+            argValues: state.state.argValues.filter(a => "id" in a && a.id === action.id)
           }
         };
         case "moveNode": return {
@@ -67,10 +68,30 @@ export const useEditorAppStateReducer = () =>
             ...state.state,
             nodeState: {
               ...state.state.nodeState,
-              [action.id]: action.state
+              [action.id]: { value: action.state }
             }
           }
         };
+        case "setValue": {
+          let updated = false;
+
+          // eslint-disable-next-line no-return-assign
+          const result = state.state.argValues.map(d =>
+            d.to[0] === action.to[0] && d.to[1] === action.to[1]
+              ? (updated = true, { ...d, value: action.value })
+              : d
+          );
+
+          return {
+            ...state,
+            state: {
+              ...state.state,
+              argValues: updated
+                ? result
+                : [...result, { value: action.value, to: action.to }]
+            }
+          };
+        }
       }
       return state as never;
     }, _s), [], emptyState);
@@ -89,7 +110,7 @@ const emptyState = (): AppState => {
   return {
     state: {
       nodes: n,
-      refs: a,
+      argValues: a,
       nodePosition: {},
       nodeState: {}
     },
@@ -108,7 +129,8 @@ const flatten = <T>(x: T | T[]) => {
 const addNode = <const T extends readonly Arg[]>(n: NodeModel[], type: NodeDeclaration<T>): NodeModel[] =>
   [...n as any, { id: getNewId(n), type }];
 
-const addRef = (refs: NodeReference[], from: [number, number], to: [number, number]) =>
+const addRef = (refs: ArgValue[], from: [number, number], to: [number, number]) =>
   [...refs.filter(d => !(d.to[0] === to[0] && d.to[1] === to[1])), { id: getNewId(refs), from, to }];
 
-export const getNewId = (array: { id: number }[]) => array.reduce((acc, x) => x.id > acc ? x.id : acc, 0) + 1;
+export const getNewId = (array: ({} | { id: number })[]) =>
+  array.reduce<number>((acc, x) => "id" in x ? x.id > acc ? x.id : acc : acc, 0) + 1;

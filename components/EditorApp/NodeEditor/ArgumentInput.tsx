@@ -7,7 +7,7 @@ import { validateValue } from "../utils";
 
 interface Props {
   value?: string;
-  argDeclaration: Arg;
+  arg: Arg;
 
   setValue: Dispatch<string | number>;
 }
@@ -16,40 +16,40 @@ export const ArgumentInput: FC<Props> = (p) => {
   return (
     <>
       {[
-        isNumberType(p.argDeclaration) && <NumberInput {...p} argDeclaration={p.argDeclaration} />,
-        isStringType(p.argDeclaration) && <TextInput {...p} argDeclaration={p.argDeclaration} />
+        isNumberType(p.arg) && <NumberInput {...p} arg={p.arg} />,
+        isStringType(p.arg) && <TextInput {...p} arg={p.arg} />
         // isTuppleType(p.argDeclaration) &&
         //   <TextInput {...p} argDeclaration={p.argDeclaration} />
-      ].find(Boolean) ?? <FormLabel>{p.argDeclaration.name}</FormLabel>}
+      ].find(Boolean) ?? <FormLabel>{p.arg.name}</FormLabel>}
     </>
   );
 };
 
-const TextInput: FC<Props & { argDeclaration: Arg<string> }> = ({ value, argDeclaration, setValue }) => {
+const TextInput: FC<Props & { arg: Arg<string> }> = ({ value, arg, setValue }) => {
   return (
     <FormInput
-      value={validateValue(argDeclaration, value) ?? ""}
-      placeholder={`${argDeclaration.defaultValue ?? ""}`}
+      value={validateValue(arg, value) ?? ""}
+      placeholder={`${arg.defaultValue ?? ""}`}
       onChange={e => setValue(e.target.value)}
       size="sm"
-      startDecorator={argDeclaration.name}
+      startDecorator={arg.name}
     />
   );
 };
 
-const NumberInput: FC<Props & { argDeclaration: Arg<number> }> = ({ value, argDeclaration, setValue }) => {
+const NumberInput: FC<Props & { arg: Arg<number> }> = ({ value, arg, setValue }) => {
   return (
     <FormInput
       type="number"
-      value={validateValue(argDeclaration, value) ?? ""}
-      placeholder={`${argDeclaration.defaultValue ?? ""}`}
+      value={validateValue(arg, value) ?? ""}
+      placeholder={`${arg.defaultValue ?? ""}`}
       onChange={e => {
         const v = +e.target.value;
         if (Object.is(v, NaN)) return;
         setValue(v);
       }}
       size="sm"
-      startDecorator={argDeclaration.name}
+      startDecorator={arg.name}
     />
   );
 };

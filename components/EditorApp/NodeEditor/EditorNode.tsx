@@ -2,20 +2,19 @@ import { Box, FormControl, FormLabel, Sheet, styled, Tooltip, useTheme } from "@
 import { FC } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { NodeModel } from "../model";
-import { useMutate, useNodeState, useRefs } from "../NodeContext";
+import { ArgInlineValue, NodeModel } from "../model";
+import { useArgValues, useMutate } from "../NodeContext";
 import { renderableType } from "../SVGRenderer/args";
 import { Input, Output } from "../SVGRenderer/nodes";
 import { ArgumentInput } from "./ArgumentInput";
 
 export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) => {
-  const data = useRefs();
-  const nodeState = useNodeState();
-  const { setNodeState } = useMutate();
+  const argValues = useArgValues();
+  const { setValue } = useMutate();
   const { vars } = useTheme();
 
-  const nodeRefs = Object.fromEntries(
-    data.filter(d => d.to[0] === +node.id).map(d => [d.to[1], d])
+  const nodeValues = Object.fromEntries(
+    argValues.filter(d => d.to[0] === +node.id).map(d => [d.to[1], d])
   );
 
   return (
@@ -43,14 +42,14 @@ export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =
                   />
                 )}
 
-                {nodeRefs[i] !== undefined
+                {nodeValues[i] && "id" in nodeValues[i]
                   ? <FormLabel>{a.name}</FormLabel>
                   : (
                     <FormControl>
                       <ArgumentInput
-                        value={(nodeState[i] as string) ?? ""}
-                        argDeclaration={a}
-                        setValue={v => setNodeState(node.id, v)}
+                        value={(nodeValues[i] as ArgInlineValue | undefined)?.value as string ?? ""}
+                        arg={a}
+                        setValue={v => setValue(v, [node.id, i])}
                       />
                     </FormControl>
                   )}

@@ -30,9 +30,16 @@ export type NodeDeclaration<
 export const nodeDeclaration = <
   const TArgs extends readonly Arg[],
   const TReturns extends readonly Arg[]
-> (node: NodeDeclaration<TArgs, TReturns>): NodeDeclaration<TArgs, TReturns> => node;
+>(node: NodeDeclaration<TArgs, TReturns>): NodeDeclaration<TArgs, TReturns> => node;
 
-export type NodeReference = {
+export type ArgValue = ArgReference | ArgInlineValue;
+
+export type ArgInlineValue = {
+  value: unknown;
+  to: [id: number, index: number];
+};
+
+export type ArgReference = {
   id: number;
   from: [id: number, index: number];
   to: [id: number, index: number];

@@ -7,21 +7,27 @@ export const Image = nodeDeclaration({
   args: [{ type: stringType, name: "Src" }],
   returns: [{ type: renderableType, name: "Output" }],
   render: ([src], { useEffect, useState }) => {
-    const [data, setData] = useState<string>();
+    const [data, setData] = useState<string | undefined>();
 
     useEffect(() => {
       const abortController = new AbortController();
-      void fetch(src, { signal: abortController.signal }).then(r => r.blob()).then(b => {
-        const reader = new FileReader();
-        reader.onload = () => setData(reader.result as string);
-        reader.readAsDataURL(b);
-      }).catch(() => null);
+      if (!src?.trim()) {
+        setData(undefined);
+      } else {
+        void fetch(src, { signal: abortController.signal })
+          .then(r => r.ok ? r.blob() : Promise.reject(new Error()))
+          .then(b => {
+            const reader = new FileReader();
+            reader.onload = () => setData(reader.result as string);
+            reader.readAsDataURL(b);
+          }).catch(() => setData(undefined));
+      }
 
       return () => {
         abortController.abort();
       };
     }, [src]);
 
-    return <image href={data} />;
+    return data ? <image href={data} /> : null;
   }
 });

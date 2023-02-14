@@ -3,13 +3,13 @@ import SaveIcon from "@mui/icons-material/Save";
 import { Box, IconButton } from "@mui/joy";
 import { FC, ReactNode, useMemo, useRef } from "react";
 
-import { useRefs, useMutate, useNodes, useNodeState } from "../NodeContext";
-import { renderNode } from "./createRenderArg";
+import { useArgValues, useMutate, useNodes, useNodeState } from "../NodeContext";
+import { renderNode } from "./renderNode";
 import { Output } from "./nodes/Output";
 
 export const SVGRenderer: FC = () => {
   const nodes = useNodes();
-  const args = useRefs();
+  const args = useArgValues();
   const state = useNodeState();
 
   const { prevEffectList, setNodeState } = useMutate();
