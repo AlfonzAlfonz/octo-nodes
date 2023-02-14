@@ -1,5 +1,5 @@
+import { nodeDeclaration } from "../../model";
 import { numberType, renderableType, tupleType } from "../args";
-import { nodeDeclaration } from "../nodeDeclaration";
 
 export const Position = nodeDeclaration({
   id: "position",
@@ -11,11 +11,10 @@ export const Position = nodeDeclaration({
   returns: [
     { type: renderableType, name: "Output" }
   ],
-  render: ([children, pos], { renderArg }) => {
-    const posVal = renderArg(pos);
+  render: ([children, pos]) => {
     return (
-      <g transform={`${posVal ? `translate(${posVal[0]}, ${posVal[1]})` : ""}`}>
-        {renderArg(children)}
+      <g transform={`${pos ? `translate(${pos[0]}, ${pos[1]})` : ""}`}>
+        {children}
       </g>
     );
   }

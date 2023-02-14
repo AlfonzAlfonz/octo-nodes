@@ -1,5 +1,5 @@
 import { renderableType } from "../args";
-import { nodeDeclaration } from "../nodeDeclaration";
+import { nodeDeclaration } from "../../model";
 
 export const Output = nodeDeclaration({
   id: "output",
@@ -10,9 +10,9 @@ export const Output = nodeDeclaration({
   returns: [
     { type: renderableType, name: "Output" }
   ],
-  render: ([result], { renderArg }) => {
+  render: ([result]) => {
     return (
-      <svg>{renderArg(result)}</svg>
+      <svg>{result}</svg>
     );
   }
 });

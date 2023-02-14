@@ -1,11 +1,13 @@
 import { FormLabel, Input as FormInput } from "@mui/joy";
-import { intType, numberType, stringType, tupleType, ArgType } from "components/SVGRenderer/args";
-import { ArgDeclaration, ArgValue } from "model";
 import { Dispatch, FC } from "react";
 
+import { Arg } from "../model";
+import { ArgType, intType, numberType, stringType, tupleType } from "../SVGRenderer/args";
+import { validateValue } from "../utils";
+
 interface Props {
-  value?: ArgValue;
-  argDeclaration: ArgDeclaration;
+  value?: string;
+  argDeclaration: Arg;
 
   setValue: Dispatch<string | number>;
 }
@@ -23,10 +25,10 @@ export const ArgumentInput: FC<Props> = (p) => {
   );
 };
 
-const TextInput: FC<Props & { argDeclaration: ArgDeclaration<string> }> = ({ value, argDeclaration, setValue }) => {
+const TextInput: FC<Props & { argDeclaration: Arg<string> }> = ({ value, argDeclaration, setValue }) => {
   return (
     <FormInput
-      value={value?.value ?? ""}
+      value={validateValue(argDeclaration, value) ?? ""}
       placeholder={`${argDeclaration.defaultValue ?? ""}`}
       onChange={e => setValue(e.target.value)}
       size="sm"
@@ -35,11 +37,11 @@ const TextInput: FC<Props & { argDeclaration: ArgDeclaration<string> }> = ({ val
   );
 };
 
-const NumberInput: FC<Props & { argDeclaration: ArgDeclaration<number> }> = ({ value, argDeclaration, setValue }) => {
+const NumberInput: FC<Props & { argDeclaration: Arg<number> }> = ({ value, argDeclaration, setValue }) => {
   return (
     <FormInput
       type="number"
-      value={value?.value ?? ""}
+      value={validateValue(argDeclaration, value) ?? ""}
       placeholder={`${argDeclaration.defaultValue ?? ""}`}
       onChange={e => {
         const v = +e.target.value;
@@ -52,6 +54,6 @@ const NumberInput: FC<Props & { argDeclaration: ArgDeclaration<number> }> = ({ v
   );
 };
 
-const isNumberType = (a: ArgDeclaration): a is ArgDeclaration<number> => a.type === intType || a.type === numberType;
-const isStringType = (a: ArgDeclaration): a is ArgDeclaration<string> => a.type === stringType;
-const isTuppleType = (a: ArgDeclaration): a is ArgDeclaration<ArgType<unknown>[]> => a.type === tupleType as any;
+const isNumberType = (a: Arg): a is Arg<number> => a.type === intType || a.type === numberType;
+const isStringType = (a: Arg): a is Arg<string> => a.type === stringType;
+const isTuppleType = (a: Arg): a is Arg<ArgType<unknown>[]> => a.type === tupleType as any;

@@ -1,11 +1,10 @@
 import "reactflow/dist/style.css";
 
 import { styled } from "@mui/joy";
-import { ArgRef, getNewId } from "model";
 import { FC, useCallback, useMemo } from "react";
 import ReactFlow, { Background, Controls, Edge, MiniMap, Node, OnConnect, OnEdgesChange, OnNodesChange } from "reactflow";
 
-import { useNodeData, useNodes, useNodeState } from "../NodeContext";
+import { useMutate, useNodePosition, useNodes, useRefs } from "../NodeContext";
 import { EditorNode } from "./EditorNode";
 import { Toolbar } from "./Toolbar";
 
@@ -14,35 +13,33 @@ const nodeTypes = {
 };
 
 export const NodeEditor: FC = () => {
-  const [nodesCtx] = useNodes();
-  const [dataCtx, setData] = useNodeData();
-  const [stateCtx, setState] = useNodeState();
+  const nodesCtx = useNodes();
+  const dataCtx = useRefs();
+  const nodePosition = useNodePosition();
+  const { addRef, removeRef, moveNode } = useMutate();
 
   const nodes = useMemo<Node[]>(() =>
     nodesCtx.map((n, i) => ({
       id: `${n.id}`,
       type: "default",
-      position: stateCtx.nodes[n.id]?.position ?? { x: 0, y: 0 },
+      position: nodePosition[n.id] ?? { x: 0, y: 0 },
       data: n
     })),
-  [nodesCtx, stateCtx]);
+  [nodesCtx, nodePosition]);
 
-  const edges = useMemo<Edge[]>(() => dataCtx.map((d, i) => "from" in d ? {
+  const edges = useMemo<Edge[]>(() => dataCtx.map((d, i) => ({
     id: `${i}`,
     source: `${d.from[0]}`,
     sourceHandle: `${d.from[1]}`,
     target: `${d.to[0]}`,
     targetHandle: `${d.to[1]}`
-  } : null!).filter(Boolean), [dataCtx]);
+  })).filter(Boolean), [dataCtx]);
 
   const onNodesChange = useCallback<OnNodesChange>((events) => {
     for (const e of events) {
       switch (e.type) {
         case "position":
-          e.position && setState(state => ({
-            ...state,
-            nodes: { ...state.nodes, [e.id]: { ...state.nodes[e.id], position: e.position! } }
-          }));
+          e.position && moveNode(+e.id, e.position);
           break;
         case "dimensions": break;
         case "select": break;
@@ -51,28 +48,25 @@ export const NodeEditor: FC = () => {
         case "reset": break;
       }
     }
-  }, [setState]);
+  }, [moveNode]);
 
   const onEdgesChange = useCallback<OnEdgesChange>((events) => {
     for (const e of events) {
       switch (e.type) {
         case "select": break;
         case "remove":
-          setData(data => data.filter(d => +e.id !== d.id));
+          removeRef(+e.id);
           break;
         case "add": break;
         case "reset": break;
       }
     }
-  }, [setData]);
+  }, [removeRef]);
 
   const onConnect = useCallback<OnConnect>(({ source, sourceHandle, target, targetHandle }) => {
     if (!source || !sourceHandle || !target || !targetHandle) return;
-    setData((data) => [
-      ...data.filter(d => !(`${d.to[0]}` === target && `${d.to[1]}` === targetHandle)),
-      { id: getNewId(data), from: [+source, +sourceHandle], to: [+target, +targetHandle] } as ArgRef
-    ]);
-  }, [setData]);
+    addRef([+source, +sourceHandle], [+target, +targetHandle]);
+  }, [addRef]);
 
   return (
     <>

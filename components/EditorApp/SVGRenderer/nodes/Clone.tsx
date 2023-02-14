@@ -1,5 +1,5 @@
+import { nodeDeclaration } from "../../model";
 import { intType, numberType, renderableType } from "../args";
-import { nodeDeclaration } from "../nodeDeclaration";
 
 export const Clone = nodeDeclaration({
   id: "clone",
@@ -10,12 +10,12 @@ export const Clone = nodeDeclaration({
     { type: numberType, name: "Y", defaultValue: 25 }
   ],
   returns: [{ type: renderableType, name: "Output" }],
-  render: ([children, n, y], { renderArg }) => {
+  render: ([children, n, y]) => {
     return (
       <>
-        {([...Array(renderArg(n))].map((_, i) => (
-          <g key={i} transform={`translate(0, ${i * (renderArg(y) ?? 0)})`}>
-            {renderArg(children)}
+        {([...Array(n)].map((_, i) => (
+          <g key={i} transform={`translate(0, ${i * y})`}>
+            {(children)}
           </g>
         )))}
       </>

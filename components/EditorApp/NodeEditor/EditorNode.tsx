@@ -1,18 +1,20 @@
-import { Box, FormControl, FormLabel, Sheet, Tooltip, styled, useTheme } from "@mui/joy";
-import { useNodeData } from "components/NodeContext";
-import { renderableType } from "components/SVGRenderer/args";
-import { Input, Output } from "components/SVGRenderer/nodes";
-import { ArgValue, getNewId, NodeModel } from "model";
+import { Box, FormControl, FormLabel, Sheet, styled, Tooltip, useTheme } from "@mui/joy";
 import { FC } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
+import { NodeModel } from "../model";
+import { useMutate, useNodeState, useRefs } from "../NodeContext";
+import { renderableType } from "../SVGRenderer/args";
+import { Input, Output } from "../SVGRenderer/nodes";
 import { ArgumentInput } from "./ArgumentInput";
 
 export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) => {
-  const [data, setData] = useNodeData();
+  const data = useRefs();
+  const nodeState = useNodeState();
+  const { setNodeState } = useMutate();
   const { vars } = useTheme();
 
-  const nodeData = Object.fromEntries(
+  const nodeRefs = Object.fromEntries(
     data.filter(d => d.to[0] === +node.id).map(d => [d.to[1], d])
   );
 
@@ -41,25 +43,14 @@ export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =
                   />
                 )}
 
-                {nodeData[i] !== undefined && !("value" in nodeData[i])
+                {nodeRefs[i] !== undefined
                   ? <FormLabel>{a.name}</FormLabel>
                   : (
                     <FormControl>
                       <ArgumentInput
-                        value={(nodeData[i] as ArgValue)}
+                        value={(nodeState[i] as string) ?? ""}
                         argDeclaration={a}
-                        setValue={v => setData(dats => {
-                          let updated = false;
-
-                          // eslint-disable-next-line no-return-assign
-                          const result = dats.map(d =>
-                            d.to[0] === node.id && d.to[1] === i
-                              ? (updated = true, { ...d, value: v })
-                              : d
-                          );
-
-                          return updated ? result : [...result, { id: getNewId(dats), value: v, to: [node.id, i] }];
-                        })}
+                        setValue={v => setNodeState(node.id, v)}
                       />
                     </FormControl>
                   )}

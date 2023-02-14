@@ -1,17 +1,20 @@
 import styled from "@emotion/styled";
 import SaveIcon from "@mui/icons-material/Save";
 import { Box, IconButton } from "@mui/joy";
-import { useNodeData, useNodes } from "components/NodeContext";
-import { FC, useMemo, useRef } from "react";
+import { FC, ReactNode, useMemo, useRef } from "react";
 
-import { createRenderArg } from "./nodeDeclaration";
+import { useRefs, useMutate, useNodes, useNodeState } from "../NodeContext";
+import { renderNode } from "./createRenderArg";
 import { Output } from "./nodes/Output";
 
 export const SVGRenderer: FC = () => {
-  const [nodes] = useNodes();
-  const [data] = useNodeData();
+  const nodes = useNodes();
+  const args = useRefs();
+  const state = useNodeState();
+
+  const { prevEffectList, setNodeState } = useMutate();
+
   const output = useMemo(() => nodes.find(n => n.type.id === Output.id)!, [nodes]);
-  const renderArg = useMemo(() => createRenderArg(nodes, data, output), [data, nodes, output]);
   const svgRef = useRef<SVGSVGElement>(null!);
   const canvasRef = useRef<HTMLCanvasElement>(null!);
   const imgRef = useRef<HTMLImageElement>(null!);
@@ -48,7 +51,7 @@ export const SVGRenderer: FC = () => {
                 `
               }}
             />
-            {renderArg({ index: 0 })}
+            {renderNode(nodes, args, prevEffectList.current, state, setNodeState, output) as ReactNode[]}
           </StyledSvg>
         </Box>
 
@@ -76,7 +79,9 @@ export const SVGRenderer: FC = () => {
         </IconButton>
       </Box>
 
-      <Box sx={{ position: "absolute", top: "-10000px", left: "-10000px" }}>
+      <Box
+        sx={{ position: "absolute", top: "-10000px", left: "-10000px" }}
+      >
 
         {/* eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element */}
         <img ref={imgRef} style={{ background: "white" }} />

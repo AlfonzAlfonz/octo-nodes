@@ -1,5 +1,5 @@
-import { renderableType, stringType } from "../args";
-import { nodeDeclaration } from "../nodeDeclaration";
+import { nodeDeclaration } from "../../model";
+import { renderableType } from "../args";
 
 export const Combine = nodeDeclaration({
   id: "combine",
@@ -8,11 +8,11 @@ export const Combine = nodeDeclaration({
   returns: [
     { type: renderableType, name: "Output" }
   ],
-  render: ([a, b], { renderArg }) => {
+  render: ([a, b]) => {
     return (
       <>
-        {renderArg(a)}
-        {renderArg(b)}
+        {a}
+        {b}
       </>
     );
   }

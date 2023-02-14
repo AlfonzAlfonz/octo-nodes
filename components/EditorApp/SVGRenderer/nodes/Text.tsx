@@ -1,5 +1,5 @@
+import { nodeDeclaration } from "../../model";
 import { renderableType, stringType } from "../args";
-import { nodeDeclaration } from "../nodeDeclaration";
 
 export const Text = nodeDeclaration({
   id: "text",
@@ -8,7 +8,7 @@ export const Text = nodeDeclaration({
   returns: [
     { type: renderableType, name: "Output" }
   ],
-  render: ([children], { renderArg }) => {
-    return <text>{renderArg(children)}</text>;
+  render: ([children]) => {
+    return <text>{children}</text>;
   }
 });

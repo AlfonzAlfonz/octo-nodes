@@ -1,16 +1,16 @@
 import AddIcon from "@mui/icons-material/Add";
 import ScreenRotationAltIcon from "@mui/icons-material/ScreenRotationAlt";
 import { Box, IconButton, Menu, MenuItem, Stack } from "@mui/joy";
-import { Clone, Combine, Image, Input, Text } from "components/SVGRenderer/nodes";
-import { addNode, NodeDeclaration } from "model";
+import { NodeDeclaration } from "components/EditorApp/model";
 import { FC, useState } from "react";
 
-import { useNodes, useNodeState } from "../NodeContext";
+import { useMutate } from "../NodeContext";
+import { Clone, Combine, Image, Input, Text } from "../SVGRenderer/nodes";
+import { Clock } from "../SVGRenderer/nodes/Clock";
 
 export const Toolbar: FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [state, setState] = useNodeState();
-  const [nodes, setNodes] = useNodes();
+  const { addNode, setTab } = useMutate();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -22,7 +22,7 @@ export const Toolbar: FC = () => {
   };
 
   const addInput = (node: NodeDeclaration<any>) => handleClose(() => {
-    setNodes(n => addNode(n, node));
+    addNode(node);
   });
 
   return (
@@ -32,7 +32,7 @@ export const Toolbar: FC = () => {
         spacing={1}
         direction="row"
       >
-        <IconButton onClick={() => setState(n => ({ ...n, tab: "inputs" }))}>
+        <IconButton onClick={() => setTab("inputs")}>
           <ScreenRotationAltIcon />
         </IconButton>
 
@@ -53,6 +53,7 @@ export const Toolbar: FC = () => {
         <MenuItem onClick={addInput(Clone)}>Clone</MenuItem>
         <MenuItem onClick={addInput(Image)}>Image</MenuItem>
         <MenuItem onClick={addInput(Combine)}>Combine</MenuItem>
+        <MenuItem onClick={addInput(Clock)}>Clock</MenuItem>
       </Menu>
     </>
   );
