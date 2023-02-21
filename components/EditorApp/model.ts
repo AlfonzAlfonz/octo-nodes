@@ -1,6 +1,6 @@
 import { DependencyList, Dispatch, EffectCallback, SetStateAction } from "react";
 
-import { ArgType } from "./SVGRenderer/args";
+import { ArgType } from "./SVGRenderer/argTypes";
 
 export type Arg<T extends unknown = unknown> = {
   type: ArgType<T>;
@@ -32,14 +32,14 @@ export const nodeDeclaration = <
   const TReturns extends readonly Arg[]
 >(node: NodeDeclaration<TArgs, TReturns>): NodeDeclaration<TArgs, TReturns> => node;
 
-export type ArgValue = ArgReference | ArgInlineValue;
+export type NodeArg = NodeRefArg | NodeValueArg;
 
-export type ArgInlineValue = {
+export type NodeValueArg = {
   value: unknown;
   to: [id: number, index: number];
 };
 
-export type ArgReference = {
+export type NodeRefArg = {
   id: number;
   from: [id: number, index: number];
   to: [id: number, index: number];

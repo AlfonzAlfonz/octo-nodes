@@ -1,22 +1,13 @@
 import { DependencyList } from "react";
 
 import { Arg } from "./model";
-import { ArgType } from "./SVGRenderer/args";
+import { ArgType } from "./SVGRenderer/argTypes";
 
 export const validateValue = <T extends unknown>(argDeclaration: Arg<T>, value: unknown): T | null =>
-  (validateType(argDeclaration.type, value) ? value : null) ?? argDeclaration.defaultValue ?? null;
+  (argDeclaration.type.testValue(value) ? value : null) ?? argDeclaration.defaultValue ?? null;
 
-const validateType = <T extends unknown>(
-  argType: ArgType<T>,
-  value: unknown
-): value is T => {
-  if (argType.extends && validateType(argType.extends, value)) {
-    return true;
-  }
-  return argType.testValue(value);
-};
-
-const isSubType = (type: ArgType, subType: ArgType) => false;
+export const isSubType = <T>(type: ArgType<T>, subType: ArgType): subType is ArgType<T> =>
+  subType.id === type.id || more(type.includes ?? []).some(t => isSubType(t, subType));
 
 export const areHookInputsEqual = (nextDeps: DependencyList, prevDeps: DependencyList) => {
   if (nextDeps.length !== prevDeps.length) {
@@ -33,3 +24,5 @@ export const areHookInputsEqual = (nextDeps: DependencyList, prevDeps: Dependenc
 
   return true;
 };
+
+export const more = <T>(x: T | T[]) => Array.isArray(x) ? x : [x];

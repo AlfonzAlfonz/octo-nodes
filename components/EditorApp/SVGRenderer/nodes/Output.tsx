@@ -1,4 +1,4 @@
-import { renderableType } from "../args";
+import { renderableType } from "../argTypes";
 import { nodeDeclaration } from "../../model";
 
 export const Output = nodeDeclaration({

@@ -1,22 +1,30 @@
 import { DependencyList, EffectCallback } from "react";
 
-import { NodeModel, ArgReference } from "../model";
+import { NodeArg, NodeModel } from "../model";
 import { useMutate } from "../NodeContext";
 import { areHookInputsEqual, validateValue } from "../utils";
 
+type RenderInputState = {
+  nodes: NodeModel[];
+  args: NodeArg[];
+  nodeState: Record<string, { value: unknown }>;
+  setNodeState: ReturnType<typeof useMutate>["setNodeState"];
+};
+
+type RenderInternals = {
+  prevEffectList: Map<number, [ReturnType<EffectCallback>, DependencyList]>;
+};
+
 export const renderNode = (
-  nodes: NodeModel[],
-  refs: ArgReference[],
-  prevEffectList: Map<number, [ReturnType<EffectCallback>, DependencyList]>,
-  nodeState: Record<string, { value: unknown }>,
-  setNodeState: ReturnType<typeof useMutate>["setNodeState"],
+  state: RenderInputState,
+  internals: RenderInternals,
   node: NodeModel
 ): unknown[] => {
   const evaluatedArgs = node.type.args.map((argDeclaration, i) => {
-    const ref = refs.find(a => a.to[0] === node.id && a.to[1] === i);
+    const ref = state.args.find(a => a.to[0] === node.id && a.to[1] === i);
     const value = !ref ? undefined : "value" in ref
       ? ref.value
-      : renderNode(nodes, refs, prevEffectList, nodeState, setNodeState, nodes.find(n => n.id === ref.from[0])!)[ref.from[1]];
+      : renderNode(state, internals, state.nodes.find(n => n.id === ref.from[0])!)[ref.from[1]];
 
     return validateValue(argDeclaration, value) ?? null;
   });
@@ -28,13 +36,13 @@ export const renderNode = (
       effect = e;
     },
     useState: <T extends unknown>(initialValue?: T) => {
-      const state = nodeState[node.id];
+      const s = state.nodeState[node.id];
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      return [state ? state.value as T : initialValue!, x => setNodeState(node.id, x)];
+      return [s ? s.value as T : initialValue!, x => state.setNodeState(node.id, x)];
     }
   });
 
-  const prevEffect = prevEffectList.get(node.id);
+  const prevEffect = internals.prevEffectList.get(node.id);
   let equal: boolean | undefined;
 
   if (prevEffect) {
@@ -47,7 +55,7 @@ export const renderNode = (
   }
 
   if (effect && (!prevEffect || (!equal ?? !areHookInputsEqual(effect[1], prevEffect[1])))) {
-    prevEffectList.set(node.id, [effect[0](), effect[1]]);
+    internals.prevEffectList.set(node.id, [effect[0](), effect[1]]);
   }
 
   if (Array.isArray(res)) return res;

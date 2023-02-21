@@ -2,7 +2,7 @@ import { FormLabel, Input as FormInput } from "@mui/joy";
 import { Dispatch, FC } from "react";
 
 import { Arg } from "../model";
-import { ArgType, intType, numberType, stringType, tupleType } from "../SVGRenderer/args";
+import { ArgType, intType, numberType, stringType, tupleType } from "../SVGRenderer/argTypes";
 import { validateValue } from "../utils";
 
 interface Props {

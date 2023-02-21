@@ -1,5 +1,5 @@
 import { nodeDeclaration } from "../../model";
-import { numberType } from "../args";
+import { numberType } from "../argTypes";
 
 export const Clock = nodeDeclaration({
   id: "clock",

@@ -1,5 +1,5 @@
 import { nodeDeclaration } from "../../model";
-import { renderableType, stringType } from "../args";
+import { renderableType, stringType } from "../argTypes";
 
 export const Image = nodeDeclaration({
   id: "image",

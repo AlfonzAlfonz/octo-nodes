@@ -1,16 +1,19 @@
 import { Box, FormControl, FormLabel, Sheet, styled, Tooltip, useTheme } from "@mui/joy";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { NodeModel } from "../model";
-import { useMutate, useNodeState } from "../NodeContext";
-import { renderableType, stringType } from "../SVGRenderer/args";
+import { NodeModel, NodeValueArg } from "../model";
+import { useMutate, useNodeArgs } from "../NodeContext";
+import { renderableType, stringType } from "../SVGRenderer/argTypes";
 import { ArgumentInput } from "./ArgumentInput";
 
 export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) => {
-  const nodeState = useNodeState();
-  const { setNodeState } = useMutate();
+  const args = useNodeArgs();
+  const { setValue } = useMutate();
   const { vars } = useTheme();
+
+  const nodeVal = useMemo(() =>
+    args.find((a): a is NodeValueArg => a.to[0] === node.id && "value" in a), [args, node.id]);
 
   return (
     <Sheet
@@ -25,13 +28,12 @@ export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =>
       <Box>
         <Box sx={{ p: 1, px: 1, position: "relative" }}>
           <Tooltip title="Text" variant="soft" placement="bottom-start">
-
             <FormControl>
               <ArgumentInput
-                value={nodeState[node.id]?.value as string ?? ""}
+                value={nodeVal?.value as string ?? ""}
                 arg={{ type: stringType, name: "Value" }}
                 setValue={v => {
-                  setNodeState(node.id, v);
+                  setValue(v, [node.id, 0]);
                 }}
               />
             </FormControl>

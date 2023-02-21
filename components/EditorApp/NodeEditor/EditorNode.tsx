@@ -2,19 +2,19 @@ import { Box, FormControl, FormLabel, Sheet, styled, Tooltip, useTheme } from "@
 import { FC } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { ArgInlineValue, NodeModel } from "../model";
-import { useArgValues, useMutate } from "../NodeContext";
-import { renderableType } from "../SVGRenderer/args";
+import { NodeValueArg, NodeModel } from "../model";
+import { useNodeArgs, useMutate } from "../NodeContext";
+import { renderableType } from "../SVGRenderer/argTypes";
 import { Input, Output } from "../SVGRenderer/nodes";
 import { ArgumentInput } from "./ArgumentInput";
 
 export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) => {
-  const argValues = useArgValues();
+  const argValues = useNodeArgs();
   const { setValue } = useMutate();
   const { vars } = useTheme();
 
   const nodeValues = Object.fromEntries(
-    argValues.filter(d => d.to[0] === +node.id).map(d => [d.to[1], d])
+    argValues.filter((d): d is NodeValueArg => d.to[0] === node.id && "value" in d).map(d => [d.to[1], d])
   );
 
   return (
@@ -47,7 +47,7 @@ export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =
                   : (
                     <FormControl>
                       <ArgumentInput
-                        value={(nodeValues[i] as ArgInlineValue | undefined)?.value as string ?? ""}
+                        value={nodeValues[i]?.value as string ?? ""}
                         arg={a}
                         setValue={v => setValue(v, [node.id, i])}
                       />

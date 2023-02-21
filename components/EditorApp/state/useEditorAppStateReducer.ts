@@ -1,17 +1,19 @@
 import { Reducer, useReducer } from "react";
 
-import { Arg, ArgValue, NodeDeclaration, NodeModel } from "../model";
+import { Arg, NodeArg, NodeDeclaration, NodeModel } from "../model";
 import { Clone, Input, Output, Position, Text } from "../SVGRenderer/nodes";
 
 export type AppState = {
   state: {
     nodes: NodeModel[];
-    argValues: ArgValue[];
-    nodePosition: Record<string, { x: number; y: number }>;
+    argValues: NodeArg[];
     nodeState: Record<string, { value: unknown }>;
   };
 
-  tab: "inputs" | "nodes";
+  ui: {
+    nodePosition: Record<string, { x: number; y: number }>;
+    tab: "inputs" | "nodes";
+  };
 };
 
 export type AppStateAction =
@@ -50,17 +52,20 @@ export const useEditorAppStateReducer = () =>
         };
         case "moveNode": return {
           ...state,
-          state: {
-            ...state.state,
+          ui: {
+            ...state.ui,
             nodePosition: {
-              ...state.state.nodePosition,
+              ...state.ui.nodePosition,
               [action.id]: action.position
             }
           }
         };
         case "setTab": return {
           ...state,
-          tab: action.tab
+          ui: {
+            ...state.ui,
+            tab: action.tab
+          }
         };
         case "setNodeState": return {
           ...state,
@@ -111,10 +116,12 @@ const emptyState = (): AppState => {
     state: {
       nodes: n,
       argValues: a,
-      nodePosition: {},
       nodeState: {}
     },
-    tab: "nodes"
+    ui: {
+      nodePosition: {},
+      tab: "nodes"
+    }
   };
 };
 
@@ -129,7 +136,7 @@ const flatten = <T>(x: T | T[]) => {
 const addNode = <const T extends readonly Arg[]>(n: NodeModel[], type: NodeDeclaration<T>): NodeModel[] =>
   [...n as any, { id: getNewId(n), type }];
 
-const addRef = (refs: ArgValue[], from: [number, number], to: [number, number]) =>
+const addRef = (refs: NodeArg[], from: [number, number], to: [number, number]) =>
   [...refs.filter(d => !(d.to[0] === to[0] && d.to[1] === to[1])), { id: getNewId(refs), from, to }];
 
 export const getNewId = (array: ({} | { id: number })[]) =>

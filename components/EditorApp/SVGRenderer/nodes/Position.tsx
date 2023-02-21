@@ -1,5 +1,5 @@
 import { nodeDeclaration } from "../../model";
-import { numberType, renderableType, tupleType } from "../args";
+import { numberType, renderableType, tupleType } from "../argTypes";
 
 export const Position = nodeDeclaration({
   id: "position",

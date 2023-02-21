@@ -1,5 +1,5 @@
 import { nodeDeclaration } from "../../model";
-import { intType, numberType, renderableType } from "../args";
+import { intType, numberType, renderableType } from "../argTypes";
 
 export const Clone = nodeDeclaration({
   id: "clone",

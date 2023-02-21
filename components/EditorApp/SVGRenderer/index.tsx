@@ -3,14 +3,14 @@ import SaveIcon from "@mui/icons-material/Save";
 import { Box, IconButton } from "@mui/joy";
 import { FC, ReactNode, useMemo, useRef } from "react";
 
-import { useArgValues, useMutate, useNodes, useNodeState } from "../NodeContext";
-import { renderNode } from "./renderNode";
+import { useMutate, useNodeArgs, useNodes, useNodeState } from "../NodeContext";
 import { Output } from "./nodes/Output";
+import { renderNode } from "./renderNode";
 
 export const SVGRenderer: FC = () => {
   const nodes = useNodes();
-  const args = useArgValues();
-  const state = useNodeState();
+  const args = useNodeArgs();
+  const nodeState = useNodeState();
 
   const { prevEffectList, setNodeState } = useMutate();
 
@@ -51,7 +51,7 @@ export const SVGRenderer: FC = () => {
                 `
               }}
             />
-            {renderNode(nodes, args, prevEffectList.current, state, setNodeState, output) as ReactNode[]}
+            {renderNode({ nodes, args, nodeState, setNodeState }, { prevEffectList: prevEffectList.current }, output) as ReactNode[]}
           </StyledSvg>
         </Box>
 

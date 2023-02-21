@@ -2,13 +2,14 @@ import ScreenRotationAltIcon from "@mui/icons-material/ScreenRotationAlt";
 import { FormControl, FormLabel, IconButton, Input as FormInput, Stack } from "@mui/joy";
 import { FC } from "react";
 
-import { useMutate, useNodes, useNodeState } from "../NodeContext";
+import { NodeValueArg } from "../model";
+import { useMutate, useNodeArgs, useNodes } from "../NodeContext";
 import { Input } from "../SVGRenderer/nodes";
 
 export const Inputs: FC = () => {
   const nodes = useNodes();
-  const nodeState = useNodeState();
-  const { setTab, setNodeState } = useMutate();
+  const args = useNodeArgs();
+  const { setTab, setValue } = useMutate();
 
   return (
     <>
@@ -21,8 +22,8 @@ export const Inputs: FC = () => {
         <FormControl key={n.id}>
           <FormLabel>Input</FormLabel>
           <FormInput
-            value={nodeState[n.id]?.value as string ?? ""}
-            onChange={e => setNodeState(n.id, e.target.value)}
+            value={args.find((a): a is NodeValueArg => a.to[0] === n.id && "value" in a)?.value as string ?? ""}
+            onChange={e => setValue(e.target.value, [n.id, 0])}
           />
         </FormControl>
       ))}

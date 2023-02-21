@@ -2,7 +2,7 @@ import { Box } from "@mui/joy";
 import { Inputs } from "components/EditorApp/Inputs";
 import { FC, useEffect, useState } from "react";
 
-import { ArgValueProvider, MutateProvider, NodesProvider, NodePositionProvider, NodeStateProvider } from "./NodeContext";
+import { NodeArgsProvider, MutateProvider, NodesProvider, NodePositionProvider, NodeStateProvider } from "./NodeContext";
 import { NodeEditor } from "./NodeEditor";
 import { useEditorAppState } from "./state";
 import { SVGRenderer } from "./SVGRenderer";
@@ -16,20 +16,20 @@ export const EditorApp: FC = () => {
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(true), []);
 
-  const { state, tab, mutate } = useEditorAppState();
+  const { state, ui, mutate } = useEditorAppState();
 
   return (
     <MutateProvider value={mutate}>
       <NodesProvider value={state.nodes}>
-        <ArgValueProvider value={state.argValues}>
+        <NodeArgsProvider value={state.argValues}>
           <NodeStateProvider value={state.nodeState}>
-            <NodePositionProvider value={state.nodePosition}>
+            <NodePositionProvider value={ui.nodePosition}>
               <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "100vh" }}>
                 <Box sx={{ minWidth: 0, display: "flex" }}>
                   <Box
                     sx={{
                       p: 2,
-                      display: tab === "inputs" ? "block" : "none",
+                      display: ui.tab === "inputs" ? "block" : "none",
                       width: "100%",
                       height: "100%"
                     }}
@@ -38,7 +38,7 @@ export const EditorApp: FC = () => {
                   </Box>
                   <Box
                     sx={{
-                      display: tab === "nodes" ? "block" : "none",
+                      display: ui.tab === "nodes" ? "block" : "none",
                       width: "100%",
                       height: "100%",
                       position: "relative"
@@ -53,7 +53,7 @@ export const EditorApp: FC = () => {
               </Box>
             </NodePositionProvider>
           </NodeStateProvider>
-        </ArgValueProvider>
+        </NodeArgsProvider>
       </NodesProvider>
     </MutateProvider>
 

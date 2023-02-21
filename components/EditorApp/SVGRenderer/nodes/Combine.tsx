@@ -1,5 +1,5 @@
 import { nodeDeclaration } from "../../model";
-import { renderableType } from "../args";
+import { renderableType } from "../argTypes";
 
 export const Combine = nodeDeclaration({
   id: "combine",

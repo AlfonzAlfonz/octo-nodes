@@ -1,45 +1,57 @@
 import { ReactNode, isValidElement } from "react";
+import { more } from "../utils";
 
 const argType = <T extends unknown>(
-  a: Omit<ArgType<T>, "testValue"> & { testValue: (x: unknown) => boolean }
-): ArgType<T> => a as ArgType<T>;
+  a: Omit<ArgType<T>, "testValue"> & { testValue?: (x: unknown) => boolean }
+): ArgType<T> => ({
+  ...a,
+  testValue: (v): v is T =>
+    (more(a.includes ?? []).some(t => t?.testValue?.(v) ?? false) ?? false) ||
+    (a.testValue?.(v) ?? false)
+});
 
 export const anyType = argType<unknown>({
-  id: "any",
-  name: "Any",
-  color: "indigo",
+  id: "never",
+  name: "Never",
+  color: "cyan",
   testValue: () => true
+});
+
+export const neverType = argType<never>({
+  id: "never",
+  name: "Never",
+  color: "indigo"
 });
 
 export const boolType = argType<boolean>({
   id: "bool",
   name: "Boolean",
   color: "black",
-  extends: anyType,
+  includes: neverType,
   testValue: x => typeof x === "boolean"
-});
-
-export const numberType = argType<number>({
-  id: "number",
-  name: "Number",
-  color: "darkOrange",
-  extends: anyType,
-  testValue: x => typeof x === "number" && !Object.is(x, NaN)
 });
 
 export const intType = argType<number>({
   id: "int",
   name: "Integer",
   color: "darkOrange",
-  extends: numberType,
-  testValue: x => Math.round(x as number) === x
+  includes: neverType,
+  testValue: x => typeof x === "number" && Math.round(x) === x
+});
+
+export const numberType = argType<number>({
+  id: "number",
+  name: "Number",
+  color: "darkOrange",
+  includes: intType,
+  testValue: x => typeof x === "number" && !Object.is(x, NaN)
 });
 
 export const stringType = argType<string>({
   id: "string",
   name: "Text",
   color: "white",
-  extends: anyType,
+  includes: neverType,
   testValue: x => typeof x === "string"
 });
 
@@ -53,10 +65,10 @@ export const arrayType = <T extends ArgType>(type: T) =>
 
 export const unionType = <T extends ArgType[]>(...types: T) =>
   argType({
-    id: `union<${types.map(t => t.id).join(" or ")}`,
+    id: `union<${types.map(t => t.id).join(" or ")}>`,
     name: `${types.map(t => t.name).join(" or ")}`,
     color: types[0]?.color ?? "violet",
-    testValue: x => types.some(t => t.testValue(x))
+    includes: types as ArgType[]
   });
 
 export const tupleType = <const T extends readonly ArgType[]>(...types: T) =>
@@ -64,7 +76,6 @@ export const tupleType = <const T extends readonly ArgType[]>(...types: T) =>
     id: `tuple<${types.map(t => t.id).join(", ")}>`,
     name: `Tuple<${types.map(t => t.name).join(", ")}>`,
     color: "violet",
-    extends: arrayType(unionType(...types)),
     testValue: x => Array.isArray(x) && x.every((e, i) => types[i].testValue(e))
   });
 
@@ -72,7 +83,7 @@ export const renderableType = argType<ReactNode>({
   id: "renderable",
   name: "Renderable",
   color: "white",
-  extends: unionType(numberType, stringType, boolType, arrayType(unionType(numberType, stringType, boolType))),
+  includes: unionType(numberType, stringType, boolType, arrayType(unionType(numberType, stringType, boolType))),
   testValue: x => x === null || x === undefined || isValidElement(x)
 });
 
@@ -82,6 +93,6 @@ export interface ArgType<T extends unknown = unknown> {
   help?: string;
   color: string;
 
-  extends?: ArgType<unknown>;
+  includes?: ArgType<unknown> | ArgType<unknown>[];
   testValue: (value: unknown) => value is T;
 }

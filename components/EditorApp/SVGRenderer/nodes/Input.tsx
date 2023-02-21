@@ -1,12 +1,14 @@
 import { nodeDeclaration } from "../../model";
-import { anyType } from "../args";
+import { stringType } from "../argTypes";
 
 export const Input = nodeDeclaration({
   id: "input",
   name: "Input",
-  args: [],
-  returns: [
-    { type: anyType, name: "Output" }
+  args: [
+    { type: stringType, name: "Input" }
   ],
-  render: (_, { useState }) => useState(null)[0]
+  returns: [
+    { type: stringType, name: "Output" }
+  ],
+  render: ([input]) => input
 });
