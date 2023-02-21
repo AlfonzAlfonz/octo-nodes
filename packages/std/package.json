@@ -1,0 +1,25 @@
+{
+  "name": "@octo-nodes/std",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@fontsource/public-sans": "^4.5.12",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/joy": "5.0.0-alpha.66",
+    "@mui/material": "^5.11.8",
+    "@total-typescript/ts-reset": "^0.3.7",
+    "@types/react": "18.0.27",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "reactflow": "^11.5.5"
+  }
+}

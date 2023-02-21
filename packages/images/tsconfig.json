@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@octo-nodes/std": [
+        "../std"
+      ],
+      "@mui/material": [
+        "./node_modules/@mui/joy"
+      ],
+      "@mui/material/*": [
+        "./node_modules/@mui/joy/*"
+      ]
+    }
+  }
+}
