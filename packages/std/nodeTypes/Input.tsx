@@ -1,5 +1,5 @@
 import { stringType } from "../argTypes";
-import { nodeType } from "./nodeType";
+import { nodeType } from "../lib/nodeType";
 
 export const Input = nodeType({
   id: "input",

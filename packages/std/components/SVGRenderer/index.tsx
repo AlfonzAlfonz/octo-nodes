@@ -1,24 +1,37 @@
-import styled from "@emotion/styled";
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import SaveIcon from "@mui/icons-material/Save";
 import { Box, IconButton } from "@mui/joy";
-import { FC, ReactNode, useMemo, useRef } from "react";
+import { FC, useMemo, useRef } from "react";
 
+import { NodeModel } from "../../lib/state";
 import { Output } from "../../nodeTypes";
 import { createRenderNode } from "../../renderNode";
-import { useLib, useMutate, useNodeArgs, useNodes, useNodeState } from "../EditorApp/context";
+import { useLib, useMutate, useNodeArgs, useNodes, useNodeState, useTypeAnalysis } from "../EditorApp/context";
 
 export const SVGRenderer: FC = () => {
   const nodes = useNodes();
   const args = useNodeArgs();
   const nodeState = useNodeState();
   const lib = useLib();
+  const analysis = useTypeAnalysis();
 
   const { prevEffectList, setNodeState } = useMutate();
 
-  const output = useMemo(() => nodes.find(n => n.type.id === Output.id)!, [nodes]);
-  const svgRef = useRef<SVGSVGElement>(null!);
+  const output = useMemo(() => nodes.find(n => n.type.id === Output.id) as any as NodeModel<typeof Output>, [nodes]);
   const canvasRef = useRef<HTMLCanvasElement>(null!);
   const imgRef = useRef<HTMLImageElement>(null!);
+
+  const [renderedOutput, width, height] = useMemo(() =>
+    createRenderNode({
+      lib,
+      nodes,
+      args,
+      nodeState,
+      setNodeState,
+      prevEffectList: prevEffectList.current,
+      analysis
+    })(output),
+  [analysis, args, lib, nodeState, nodes, output, prevEffectList, setNodeState]);
 
   return (
     <>
@@ -31,32 +44,8 @@ export const SVGRenderer: FC = () => {
           p: 5
         }}
       >
-        <Box sx={{ aspectRatio: "16 / 9" }}>
-          <StyledSvg
-            id="image-renderer"
-            viewBox="0 0 1280 720"
-            width={1280}
-            height={720}
-            ref={svgRef}
-            style={{ background: "white", pointerEvents: "none", userSelect: "none" }}
-          >
-            <style
-              dangerouslySetInnerHTML={{
-                __html: `
-                  #image-renderer * {
-                    font-family: sans-serif;
-                    color: black;
-                    line-height: 1.5;
-                    font-size: 1rem;
-                  }
-                `
-              }}
-            />
-            {createRenderNode(
-              { lib, nodes, args, nodeState, setNodeState },
-              { prevEffectList: prevEffectList.current }
-            )(output) as ReactNode[]}
-          </StyledSvg>
+        <Box sx={{ aspectRatio: `${width!} / ${height!}` }} id="image-renderer">
+          {renderedOutput}
         </Box>
 
         <IconButton
@@ -65,17 +54,19 @@ export const SVGRenderer: FC = () => {
           onClick={() => {
             const canvas = canvasRef.current;
             const img = imgRef.current;
-            if (svgRef.current && canvas) {
+            const svg = document.querySelector("#image-renderer svg") as SVGSVGElement;
+
+            if (canvas) {
               const ctx = canvas.getContext("2d")!;
 
               img.width = canvas.width;
               img.height = canvas.height;
               img.onload = () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, 1280, 720, 0, 0, 1280 * window.devicePixelRatio, 720 * window.devicePixelRatio);
+                ctx.drawImage(img, 0, 0, width!, height!, 0, 0, width! * window.devicePixelRatio, height! * window.devicePixelRatio);
                 downloadURI(canvas.toDataURL("image/png"), "img.png");
               };
-              img.src = svgDataURL(svgRef.current);
+              img.src = svgDataURL(svg);
             }
           }}
         >
@@ -90,23 +81,17 @@ export const SVGRenderer: FC = () => {
         {/* eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element */}
         <img ref={imgRef} style={{ background: "white" }} />
         <canvas
-          width={1280 * window.devicePixelRatio}
-          height={720 * window.devicePixelRatio}
+          width={width! * window.devicePixelRatio}
+          height={height! * window.devicePixelRatio}
           ref={canvasRef}
-          style={{ background: "white", width: "1280px", height: "720px" }}
+          style={{ background: "white", width: `${width!}px`, height: `${height!}px` }}
         />
       </Box>
     </>
   );
 };
 
-const StyledSvg = styled.svg`
-  background: white;
-  max-width: 100%;
-  max-height: 100%;
-`;
-
-const svgDataURL = (svg: SVGElement) => {
+const svgDataURL = (svg: SVGSVGElement) => {
   const svgAsXML = new XMLSerializer().serializeToString(svg);
   return "data:image/svg+xml," + encodeURIComponent(svgAsXML);
 };

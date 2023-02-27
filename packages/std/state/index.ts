@@ -1,5 +1,6 @@
 import { DependencyList, EffectCallback, useMemo, useRef } from "react";
 
+import { ArgType } from "../lib/argType";
 import { NodeType } from "../lib/nodeType";
 import { useEditorAppStateReducer } from "./useEditorAppStateReducer";
 
@@ -16,7 +17,7 @@ export const useEditorAppState = () => {
     const setNodeState = (id: number, s: unknown) => dispatch({ action: "setNodeState", id, state: s });
     const addRef = (from: [id: number, index: number], to: [id: number, index: number]) => dispatch({ action: "addRef", from, to });
     const removeRef = (id: number) => dispatch({ action: "removeRef", id });
-    const setValue = (value: unknown, to: [id: number, index: number]) => dispatch({ action: "setValue", value, to });
+    const setValue = <T>(value: T, type: ArgType<T>, to: [id: number, index: number]) => dispatch({ action: "setValue", value, type, to });
     const setTab = (tab: "inputs" | "nodes") => dispatch({ action: "setTab", tab });
 
     return {

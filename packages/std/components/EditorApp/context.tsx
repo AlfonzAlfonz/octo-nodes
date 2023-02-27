@@ -3,6 +3,7 @@ import { FC, ReactNode, createContext, useContext } from "react";
 import { OctoNodesLib } from "../../lib";
 import { NodeArg, NodeModel } from "../../lib/state";
 import { MutateState } from "../../state";
+import { TypeAnalysis } from "../../typeAnalysis";
 
 const _NodesContext = createContext<NodeModel[]>(null!);
 const _NodeArgsContext = createContext<NodeArg[]>(null!);
@@ -10,6 +11,7 @@ const _NodePositionContext = createContext<Record<string, { x: number; y: number
 const _NodeStateContext = createContext<Record<string, { value: unknown }>>(null!);
 const _MutateContext = createContext<MutateState>(null!);
 const _LibContext = createContext<OctoNodesLib>(null!);
+const _TypeAnalysisContext = createContext<TypeAnalysis>(null!);
 
 export const useNodes = () => useContext(_NodesContext);
 export const useNodeArgs = () => useContext(_NodeArgsContext);
@@ -17,6 +19,7 @@ export const useNodePosition = () => useContext(_NodePositionContext);
 export const useNodeState = () => useContext(_NodeStateContext);
 export const useMutate = () => useContext(_MutateContext);
 export const useLib = () => useContext(_LibContext);
+export const useTypeAnalysis = () => useContext(_TypeAnalysisContext);
 
 interface OctoNodesProviderProps {
   lib: OctoNodesLib;
@@ -24,6 +27,8 @@ interface OctoNodesProviderProps {
 
   nodes: NodeModel[];
   nodeArgs: NodeArg[];
+
+  analysis: TypeAnalysis;
 
   nodeState: Record<string, { value: unknown }>;
 
@@ -36,9 +41,11 @@ export const OctoNodesProvider: FC<OctoNodesProviderProps> = p => {
       <_MutateContext.Provider value={p.mutate}>
         <_NodesContext.Provider value={p.nodes}>
           <_NodeArgsContext.Provider value={p.nodeArgs}>
-            <_NodeStateContext.Provider value={p.nodeState}>
-              {p.children}
-            </_NodeStateContext.Provider>
+            <_TypeAnalysisContext.Provider value={p.analysis}>
+              <_NodeStateContext.Provider value={p.nodeState}>
+                {p.children}
+              </_NodeStateContext.Provider>
+            </_TypeAnalysisContext.Provider>
           </_NodeArgsContext.Provider>
         </_NodesContext.Provider>
       </_MutateContext.Provider>

@@ -1,16 +1,18 @@
-import { Box, FormControl, FormLabel, Sheet, styled, Tooltip, useTheme } from "@mui/joy";
+import { Box, FormLabel, Sheet, styled, Tooltip, useTheme } from "@mui/joy";
 import { FC, useMemo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { renderableType, stringType } from "../../argTypes";
-import { ArgumentInput } from "./ArgumentInput";
+import { renderableType } from "../../argTypes";
 import { NodeModel, NodeValueArg } from "../../lib/state";
-import { useMutate, useNodeArgs } from "../EditorApp/context";
+import { useMutate, useNodeArgs, useTypeAnalysis } from "../EditorApp/context";
+import { TypeTooltip } from "./EditorNode";
+import { EditorNodeArgument } from "./EditorNodeArgument";
 
 export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) => {
   const args = useNodeArgs();
   const { setValue } = useMutate();
   const { vars } = useTheme();
+  const analysis = useTypeAnalysis();
 
   const nodeVal = useMemo(() =>
     args.find((a): a is NodeValueArg<unknown> => a.to[0] === node.id && "value" in a), [args, node.id]);
@@ -27,17 +29,16 @@ export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =>
       <FormLabel htmlFor="text" sx={{ px: 6, py: 1, textAlign: "center", display: "block" }}>{node.type.name}</FormLabel>
       <Box>
         <Box sx={{ p: 1, px: 1, position: "relative" }}>
-          <Tooltip title="Text" variant="soft" placement="bottom-start">
-            <FormControl>
-              <ArgumentInput
-                value={nodeVal?.value as string ?? ""}
-                arg={{ type: stringType, name: "Value" }}
-                setValue={v => {
-                  setValue(v, [node.id, 0]);
-                }}
+          <TypeTooltip analysedArg={analysis.nodes[node.id]!.args[0]}>
+            <div>
+              <EditorNodeArgument
+                nodeArg={nodeVal}
+                argDeclaration={{ type: analysis.nodes[node.id]!.args[0].type, name: "Value" }}
+                analysedArg={analysis.nodes[node.id]!.args[0]}
+                setValue={(v, t) => setValue(v, t, [node.id, 0])}
               />
-            </FormControl>
-          </Tooltip>
+            </div>
+          </TypeTooltip>
         </Box>
         {node.type.returns.map((a, i) => (
           <Box key={i} sx={{ p: 1, px: 1, position: "relative" }}>

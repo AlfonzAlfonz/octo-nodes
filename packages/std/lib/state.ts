@@ -10,6 +10,7 @@ export type ArgDeclaration<T extends unknown = unknown> = {
 export type NodeArg = NodeRefArg | NodeValueArg<unknown>;
 
 export type NodeValueArg<T extends unknown> = {
+  type: ArgType<T>;
   value: T;
   to: [id: number, index: number];
 };

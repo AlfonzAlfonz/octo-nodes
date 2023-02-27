@@ -1,8 +1,9 @@
 import { Box } from "@mui/joy";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 import { OctoNodesLib } from "../../lib";
 import { useEditorAppState } from "../../state";
+import { analyseTypes } from "../../typeAnalysis";
 import { Inputs } from "../Inputs";
 import { NodeEditor } from "../NodeEditor";
 import { SVGRenderer } from "../SVGRenderer";
@@ -18,6 +19,8 @@ export const EditorApp: FC<Props> = ({ lib }) => {
 
   const { state, ui, mutate } = useEditorAppState();
 
+  const analysis = useMemo(() => analyseTypes(lib, state.nodes, state.argValues), [lib, state.argValues, state.nodes]);
+
   return (
     <OctoNodesProvider
       lib={lib}
@@ -25,6 +28,7 @@ export const EditorApp: FC<Props> = ({ lib }) => {
       nodes={state.nodes}
       nodeArgs={state.argValues}
       nodeState={state.nodeState}
+      analysis={analysis}
     >
       <OctoNodesUiProvider nodePosition={ui.nodePosition}>
         <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "100vh" }}>

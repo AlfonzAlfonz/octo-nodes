@@ -1,5 +1,15 @@
 import { more } from "../utils";
 
+export interface GenericArgType<T extends unknown = unknown, TGenerics extends readonly ArgType<unknown>[] = ArgType<unknown>[]> {
+  (...types: TGenerics): ArgType<T>;
+  generics: TGenerics;
+}
+
+export interface SpreadGenericArgType<T extends unknown = unknown> {
+  (...type: ArgType<unknown>[]): ArgType<T>;
+  spreadGenerics: ArgType<unknown>;
+}
+
 export interface ArgType<T extends unknown = unknown> {
   id: ArgTypeId;
   name: string;
@@ -11,7 +21,9 @@ export interface ArgType<T extends unknown = unknown> {
 }
 
 export type ArgTypeId =
-  | string;
+  | string
+  | [id: string, generics: ArgTypeId[]]
+  | [id: string, generics: ArgTypeId[], ordered: false];
 
 export interface ArgTypeDeclaration {
   id: ArgTypeId;
@@ -43,3 +55,21 @@ export const argType = <T extends unknown>(
     (more(a.includes ?? []).some(t => t?.testValue?.(v) ?? false) ?? false) ||
     (a.testValue?.(v) ?? false)
 });
+
+export const genericArgType = <const TGenerics extends readonly ArgType<unknown>[]>(
+  generics: TGenerics,
+  type: (...types: TGenerics) => ArgTypeDeclaration
+): GenericArgType<any, TGenerics> => {
+  const clone: GenericArgType<unknown, TGenerics> = ((...args: any[]) => type(...args as any)) as any;
+  clone.generics = generics;
+  return clone as any;
+};
+
+export const spreadGenericArgType = <TGeneric extends ArgType<unknown>>(
+  generic: TGeneric,
+  type: (...type: TGeneric[]) => ArgTypeDeclaration
+): SpreadGenericArgType<any> => {
+  const clone: SpreadGenericArgType<unknown> = ((...t: any) => type(...t)) as any;
+  clone.spreadGenerics = generic;
+  return clone as any;
+};

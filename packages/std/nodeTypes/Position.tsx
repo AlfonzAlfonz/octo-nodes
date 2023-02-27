@@ -1,4 +1,5 @@
-import { numberType, renderableType, tupleType } from "../argTypes";
+import { numberType, renderableType } from "../argTypes";
+import { tupleType } from "../argTypes/tupleType";
 import { nodeType } from "../lib/nodeType";
 
 export const Position = nodeType({

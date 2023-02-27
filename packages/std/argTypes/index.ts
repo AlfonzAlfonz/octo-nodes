@@ -1,6 +1,8 @@
 import { isValidElement, ReactNode } from "react";
 
-import { ArgType, argType } from "../lib/argType";
+import { argType } from "../lib/argType";
+import { arrayType } from "./arrayType";
+import { unionType } from "./unionType";
 
 export const neverType = argType<never>({
   id: "never",
@@ -39,30 +41,6 @@ export const stringType = argType<string>({
   includes: neverType,
   testValue: x => typeof x === "string"
 });
-
-export const arrayType = <T extends ArgType>(type: T) =>
-  argType<T extends ArgType<infer U> ? U[] : never>({
-    id: `array<${type.id}`,
-    name: `Array<${type.name}`,
-    color: type.color,
-    testValue: x => Array.isArray(x) && x.every(e => type.testValue(e))
-  });
-
-export const unionType = <T extends ArgType[]>(...types: T) =>
-  argType({
-    id: `union<${types.map(t => t.id).join(" or ")}>`,
-    name: `${types.map(t => t.name).join(" or ")}`,
-    color: types[0]?.color ?? "violet",
-    includes: types as ArgType[]
-  });
-
-export const tupleType = <const T extends readonly ArgType[]>(...types: T) =>
-  argType<{ [K in keyof T]: T[K] extends ArgType<infer U> ? U : never }>({
-    id: `tuple<${types.map(t => t.id).join(", ")}>`,
-    name: `Tuple<${types.map(t => t.name).join(", ")}>`,
-    color: "violet",
-    testValue: x => Array.isArray(x) && x.every((e, i) => types[i].testValue(e))
-  });
 
 export const renderableType = argType<ReactNode>({
   id: "renderable",

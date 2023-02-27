@@ -1,5 +1,6 @@
 import { Reducer, useReducer } from "react";
 
+import { ArgType } from "../lib/argType";
 import { NodeType } from "../lib/nodeType";
 import { ArgDeclaration, NodeArg, NodeModel } from "../lib/state";
 import { Clone, Input, Output, Position, Text } from "../nodeTypes";
@@ -23,7 +24,7 @@ export type AppStateAction =
   | { action: "setNodeState"; id: number; state: unknown }
   | { action: "addRef"; from: [id: number, index: number]; to: [id: number, index: number] }
   | { action: "removeRef"; id: number }
-  | { action: "setValue"; value: unknown; to: [id: number, index: number]}
+  | { action: "setValue"; value: unknown; type: ArgType<unknown>; to: [id: number, index: number]}
   | { action: "setTab"; tab: "inputs" | "nodes" };
 
 export const useEditorAppStateReducer = () =>
@@ -84,7 +85,7 @@ export const useEditorAppStateReducer = () =>
           // eslint-disable-next-line no-return-assign
           const result = state.state.argValues.map(d =>
             d.to[0] === action.to[0] && d.to[1] === action.to[1]
-              ? (updated = true, { ...d, value: action.value })
+              ? (updated = true, { ...d, value: action.value, type: action.type })
               : d
           );
 
@@ -94,7 +95,7 @@ export const useEditorAppStateReducer = () =>
               ...state.state,
               argValues: updated
                 ? result
-                : [...result, { value: action.value, to: action.to }]
+                : [...result, { value: action.value, to: action.to, type: action.type }]
             }
           };
         }
@@ -109,7 +110,8 @@ const emptyState = (): AppState => {
   n = addNode(n, Input);
   n = addNode(n, Position);
 
-  let a = addRef([], [4, 0], [3, 0]);
+  let a: NodeArg[] = [];
+  a = addRef(a, [4, 0], [3, 0]);
   a = addRef(a, [3, 0], [2, 0]);
   a = addRef(a, [2, 0], [1, 0]);
 
