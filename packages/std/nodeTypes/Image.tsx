@@ -5,7 +5,7 @@ import { nodeType } from "../lib/nodeType";
 export const Image = nodeType({
   id: "image",
   name: "Image",
-  args: [{ type: stringType, name: "Src" }],
+  args: [{ type: stringType, name: "Src", defaultValue: "https://placekitten.com/500/300" }],
   returns: [{ type: imageType, name: "Output" }],
   render: ([src], { useEffect, useState }) => {
     const [data, setData] = useState<string | undefined>();

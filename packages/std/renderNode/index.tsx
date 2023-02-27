@@ -19,7 +19,7 @@ type RenderInput = {
 };
 
 export const createRenderNode = (input: RenderInput) =>
-  <T extends NodeType<any, any>>(node: NodeModel<T>): More<NodeTypeReturnType<T>> => {
+  <T extends NodeType<any, any, any>>(node: NodeModel<T>): More<NodeTypeReturnType<T>> => {
     const analysedNode = input.analysis.nodes[node.id];
 
     if (!analysedNode) return [] as never;
@@ -35,7 +35,7 @@ export const createRenderNode = (input: RenderInput) =>
         if (!ref) return null;
 
         if ("value" in ref) {
-          return validateValue(type, type, ref.value, input.lib);
+          return validateValue(type, type, ref.value, input.lib.implicitCasts);
         }
 
         const fromNode = input.nodes.find(n => n.id === ref.from[0])!;
@@ -44,7 +44,7 @@ export const createRenderNode = (input: RenderInput) =>
 
         const value = nodeValue[ref.from[1]];
 
-        return validateValue(input.analysis.nodes[ref.from[0]]!.args[ref.from[1]].type, type, value, input.lib);
+        return validateValue(type, baseArgs[i].type, value, input.lib.implicitCasts);
       })
       .map((v, i) => coalesce(v, baseArgs[i].defaultValue));
 

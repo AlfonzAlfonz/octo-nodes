@@ -7,6 +7,7 @@ import { NodeModel } from "../../lib/state";
 import { Output } from "../../nodeTypes";
 import { createRenderNode } from "../../renderNode";
 import { useLib, useMutate, useNodeArgs, useNodes, useNodeState, useTypeAnalysis } from "../EditorApp/context";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 export const SVGRenderer: FC = () => {
   const nodes = useNodes();
@@ -44,9 +45,11 @@ export const SVGRenderer: FC = () => {
           p: 5
         }}
       >
-        <Box sx={{ aspectRatio: `${width!} / ${height!}` }} id="image-renderer">
-          {renderedOutput}
-        </Box>
+        <ErrorBoundary>
+          <Box sx={{ aspectRatio: `${width!} / ${height!}` }} id="image-renderer">
+            {renderedOutput}
+          </Box>
+        </ErrorBoundary>
 
         <IconButton
           sx={{ position: "absolute", bottom: 16, right: 16, color: "white" }}

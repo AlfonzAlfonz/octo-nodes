@@ -5,21 +5,21 @@ import { more } from "../utils";
 
 export const resolveGenerics = <const TArgs extends readonly ArgDeclaration[] = readonly ArgDeclaration[]>(
   args: TArgs | ((...generics: any[]) => TArgs),
-  generics?: readonly any[]
+  generics?: readonly (GenericPlaceholder<unknown> | ArgType<unknown>)[]
 ) => typeof args === "function" ? args(...generics ?? []) : args;
 
 export const validateValue = <T extends unknown>(
   from: ArgType<unknown>,
   to: ArgType<T>,
   value: unknown,
-  lib: OctoNodesLib
+  implicitCasts: OctoNodesLib["implicitCasts"]
 ): T | null => {
   if (to.testValue(value)) {
     return value ?? null;
   }
 
-  for (const impl of lib.implicitCasts) {
-    if (argTypeEquals(impl.from.id, to.id) && argTypeEquals(impl.to.id, to.id)) {
+  for (const impl of implicitCasts) {
+    if (isSubType(from, impl.from, []) && isSubType(to, impl.to, [])) {
       const converted = impl.cast(value);
       if (to.testValue(converted)) {
         return converted;
@@ -30,8 +30,26 @@ export const validateValue = <T extends unknown>(
   return null;
 };
 
-export const isSubType = <T>(type: ArgType<T>, subType: ArgType): boolean =>
-  type.id === "any" || argTypeEquals(type.id, subType.id) || more(type.includes ?? []).some(t => isSubType(t, subType));
+export const isSubType = <T>(
+  type: GenericPlaceholder<T> | ArgType<T>,
+  subType: ArgType,
+  implicitCasts: OctoNodesLib["implicitCasts"]
+): boolean => {
+  if ("infered" in type) {
+    if (isSubType(type.base, subType, implicitCasts)) {
+      type.infered = subType as ArgType<T>;
+      return true;
+    }
+    return false;
+  }
+
+  return (
+    type.id === "any" ||
+    argTypeEquals(type.id, subType.id) ||
+    more(type.includes ?? []).some(t => isSubType(t, subType, implicitCasts)) ||
+    implicitCasts.some(c => isSubType(subType, c.from, []) && isSubType(type, c.to, []))
+  );
+};
 
 export const argTypeEquals = (a: ArgTypeId, b: ArgTypeId): boolean => {
   // simple string compare
@@ -58,3 +76,10 @@ export const argTypeEquals = (a: ArgTypeId, b: ArgTypeId): boolean => {
 
   return false;
 };
+
+type GenericPlaceholder<T extends unknown> = {
+  infered: ArgType<T>;
+  base: ArgType<T>;
+};
+
+export const genericPlaceholder = <T>(base: ArgType<T>): GenericPlaceholder<T> => ({ infered: null!, base });

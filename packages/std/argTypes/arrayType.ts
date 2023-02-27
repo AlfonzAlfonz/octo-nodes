@@ -7,7 +7,7 @@ interface ArrayType {
 }
 export const arrayType: ArrayType = genericArgType([anyType], (type) => ({
   id: ["array", [type.id]],
-  name: `Array<${type.name}`,
+  name: `Array<${type.name}>`,
   color: type.color,
   testValue: x => Array.isArray(x) && x.every(e => type.testValue(e))
 }));

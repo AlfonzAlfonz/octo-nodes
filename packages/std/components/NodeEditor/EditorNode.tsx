@@ -2,7 +2,7 @@ import { Box, FormLabel, Sheet, styled, Tooltip, useTheme } from "@mui/joy";
 import { FC, ReactElement } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { renderableType } from "../../argTypes";
+import { resolveGenerics } from "../../argTypes/utils";
 import { NodeModel } from "../../lib/state";
 import { Input, Output } from "../../nodeTypes";
 import { AnalysedArg } from "../../typeAnalysis";
@@ -32,7 +32,7 @@ export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =
     >
       <FormLabel htmlFor="text" sx={{ px: 6, py: 1, textAlign: "center", display: "block" }}>{node.type.name}</FormLabel>
       <Box>
-        {node.type.args.map((a, i) => (
+        {resolveGenerics(node.type.args, node.type.generics).map((a, i) => (
           <Box key={i} sx={{ p: 1, px: 1, position: "relative" }}>
             <TypeTooltip analysedArg={analysedNode.args[i]}>
               <div>
@@ -57,19 +57,19 @@ export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =
             </TypeTooltip>
           </Box>
         ))}
-        {node.type.id !== Output.id && node.type.returns.map((a, i) => (
+        {node.type.id !== Output.id && resolveGenerics(node.type.returns, node.type.generics).map((a, i) => (
           <Box key={i} sx={{ p: 1, px: 1, position: "relative" }}>
-            <Tooltip title={a.type.name}>
+            <TypeTooltip analysedArg={{ type: analysedNode.returns[i] }}>
               <div>
                 <StyledHandle
                   type="source"
-                  color={renderableType.color}
+                  color={analysedNode.returns[i].color}
                   position={Position.Right}
                   id="0"
                 />
                 <FormLabel sx={{ textAlign: "right", display: "block" }}>{a.name}</FormLabel>
               </div>
-            </Tooltip>
+            </TypeTooltip>
           </Box>
         ))}
       </Box>
@@ -86,7 +86,11 @@ export const StyledHandle = styled(Handle)`
   }
 `;
 
-export const TypeTooltip: FC<{ analysedArg: AnalysedArg; children: ReactElement }> = ({ analysedArg, children }) => {
+export const TypeTooltip: FC<{
+  analysedArg: AnalysedArg;
+  children: ReactElement;
+  result?: boolean;
+}> = ({ analysedArg, children, result }) => {
   return (
     <Tooltip
       title={(
@@ -96,7 +100,7 @@ export const TypeTooltip: FC<{ analysedArg: AnalysedArg; children: ReactElement 
         </>
       )}
       variant="soft"
-      placement="bottom-start"
+      placement={result ? "bottom-end" : "bottom-start"}
     >
       {children}
     </Tooltip>

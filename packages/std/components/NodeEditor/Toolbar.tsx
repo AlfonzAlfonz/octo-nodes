@@ -21,7 +21,7 @@ export const Toolbar: FC = () => {
     setAnchorEl(null);
   };
 
-  const addInput = (node: NodeType<any, any>) => handleClose(() => {
+  const addInput = (node: NodeType<any, any, any>) => handleClose(() => {
     addNode(node);
   });
 

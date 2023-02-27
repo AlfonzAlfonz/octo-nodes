@@ -45,7 +45,7 @@ const TextInput: FC<InputProps<string>> = ({ argDeclaration, nodeArg, setValue, 
   return (
     <FormControl style={analysedArg.error ? { textDecoration: "red wavy underline" } : {}}>
       <FormInput
-        value={validateValue(analysedArg.type, analysedArg.type, nodeArg?.value, lib) ?? ""}
+        value={validateValue(analysedArg.type, analysedArg.type, nodeArg?.value, lib.implicitCasts) ?? ""}
         placeholder={`${argDeclaration.defaultValue ?? ""}`}
         onChange={e => setValue(e.target.value, stringType)}
         size="sm"
@@ -61,7 +61,7 @@ const NumberInput: FC<InputProps<number>> = ({ argDeclaration, nodeArg, setValue
     <FormControl style={analysedArg.error ? { textDecoration: "red wavy underline" } : {}}>
       <FormInput
         type="number"
-        value={validateValue(analysedArg.type, analysedArg.type, nodeArg?.value, lib) ?? ""}
+        value={validateValue(analysedArg.type, analysedArg.type, nodeArg?.value, lib.implicitCasts) ?? ""}
         placeholder={`${argDeclaration.defaultValue ?? ""}`}
         onChange={e => {
           const v = +e.target.value;
@@ -83,5 +83,5 @@ const SimpleLabel: FC<Props<unknown>> = ({ argDeclaration, analysedArg }) => {
   );
 };
 
-const isNumberType = (a: ArgType<unknown>): a is ArgType<number> => isSubType(numberType, a);
-const isStringType = (a: ArgType<unknown>): a is ArgType<string> => isSubType(stringType, a);
+const isNumberType = (a: ArgType<unknown>): a is ArgType<number> => isSubType(numberType, a, []);
+const isStringType = (a: ArgType<unknown>): a is ArgType<string> => isSubType(stringType, a, []);

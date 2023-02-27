@@ -1,14 +1,15 @@
-import { stringType } from "../argTypes";
+import { anyType } from "../argTypes/anyType";
 import { nodeType } from "../lib/nodeType";
 
 export const Input = nodeType({
   id: "input",
   name: "Input",
-  args: [
-    { type: stringType, name: "Input" }
+  generics: [anyType],
+  args: t => [
+    { type: t, name: "Input" }
   ],
-  returns: [
-    { type: stringType, name: "Output" }
+  returns: t => [
+    { type: t, name: "Output" }
   ],
   render: ([input]) => input
 });

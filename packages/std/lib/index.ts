@@ -11,7 +11,7 @@ import { ArgType, Cast, GenericArgType, SpreadGenericArgType } from "./argType";
 import { NodeType } from "./nodeType";
 
 export interface OctoNodesLib {
-  nodeTypes: NodeType<any, any>[];
+  nodeTypes: NodeType<any, any, any>[];
   argTypes: ArgType[];
   genericArgTypes: (GenericArgType | SpreadGenericArgType)[];
 

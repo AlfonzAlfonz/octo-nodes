@@ -1,4 +1,4 @@
-import { isSubType } from "../argTypes/utils";
+import { genericPlaceholder, isSubType, resolveGenerics } from "../argTypes/utils";
 import { OctoNodesLib } from "../lib";
 import { ArgType } from "../lib/argType";
 import { NodeArg, NodeModel, NodeValueArg } from "../lib/state";
@@ -39,7 +39,7 @@ export const analyseTypes = (lib: OctoNodesLib, nodes: NodeModel[], nodeArgs: No
       const resolvedArgs = resolveNodeArgTypes(node.id, nodeArgs, analysis);
       if (!resolvedArgs) continue;
 
-      const an = analyseNode(node, resolvedArgs);
+      const an = analyseNode(node, resolvedArgs, lib.implicitCasts);
       if (!an) continue;
 
       analysis.nodes[node.id] = an;
@@ -68,20 +68,26 @@ const resolveNodeArgTypes = (nodeId: number, nodeArgs: NodeArg[], analysis: Type
   return assignedTypes;
 };
 
-const analyseNode = (node: NodeModel, assignedTypes: Map<number, ArgType<unknown>>): AnalysedNode | undefined => {
+const analyseNode = (
+  node: NodeModel,
+  assignedTypes: Map<number, ArgType<unknown>>,
+  implicitCasts: OctoNodesLib["implicitCasts"]
+): AnalysedNode | undefined => {
+  const generics = [...node.type.generics ?? []].map(t => genericPlaceholder(t));
+
   const args: AnalysedArg[] = [];
-  for (const [i, declaration] of node.type.args.entries()) {
+  for (const [i, declaration] of resolveGenerics(node.type.args, generics).entries()) {
     const assigned = assignedTypes.get(i);
     args.push(
       assigned
-        ? isSubType(declaration.type, assigned)
+        ? isSubType(declaration.type, assigned, implicitCasts)
           ? { type: assigned }
           : { type: declaration.type, error: { error: `Argument of type ${assigned.name} is not assignable to ${declaration.type.name}` } }
         : { type: declaration.type }
     );
   }
 
-  const resolvedReturns = node.type.returns;
+  const resolvedReturns = resolveGenerics(node.type.returns, generics.map(g => g.infered ?? g.base));
 
   return {
     args,

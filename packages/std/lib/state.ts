@@ -21,7 +21,7 @@ export type NodeRefArg = {
   to: [id: number, index: number];
 };
 
-export interface NodeModel<T extends NodeType<any, any> = NodeType> {
+export interface NodeModel<T extends NodeType<any, any, any> = NodeType> {
   id: number;
   type: T;
 }

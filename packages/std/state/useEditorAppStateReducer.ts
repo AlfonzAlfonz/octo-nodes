@@ -3,7 +3,7 @@ import { Reducer, useReducer } from "react";
 import { ArgType } from "../lib/argType";
 import { NodeType } from "../lib/nodeType";
 import { ArgDeclaration, NodeArg, NodeModel } from "../lib/state";
-import { Clone, Input, Output, Position, Text } from "../nodeTypes";
+import { Clone, Image, Input, Output, Position, Text } from "../nodeTypes";
 
 export type AppState = {
   state: {
@@ -104,16 +104,18 @@ export const useEditorAppStateReducer = () =>
     }, _s), [], emptyState);
 
 const emptyState = (): AppState => {
-  let n = addNode([], Output);
-  n = addNode(n, Clone);
-  n = addNode(n, Text);
-  n = addNode(n, Input);
-  n = addNode(n, Position);
+  let n = addNode([], Output); // 1
+  n = addNode(n, Clone); // 2
+  n = addNode(n, Text); // 3
+  n = addNode(n, Input); // 4
+  n = addNode(n, Position); // 5
+  n = addNode(n, Image); // 6
 
   let a: NodeArg[] = [];
   a = addRef(a, [4, 0], [3, 0]);
   a = addRef(a, [3, 0], [2, 0]);
   a = addRef(a, [2, 0], [1, 0]);
+  // a = addRef(a, [6, 0], [1, 0]);
 
   return {
     state: {
@@ -136,7 +138,7 @@ const flatten = <T>(x: T | T[]) => {
   }
 };
 
-const addNode = <const T extends readonly ArgDeclaration[]>(n: NodeModel[], type: NodeType<T>): NodeModel[] =>
+const addNode = <const T extends readonly ArgDeclaration[]>(n: NodeModel[], type: NodeType<any, T>): NodeModel[] =>
   [...n as any, { id: getNewId(n), type }];
 
 const addRef = (refs: NodeArg[], from: [number, number], to: [number, number]) =>

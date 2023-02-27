@@ -4,13 +4,15 @@ import { ArgType } from "./argType";
 import { ArgDeclaration } from "./state";
 
 export type NodeType<
+  TGenerics extends readonly ArgType[] = readonly ArgType[],
   TArgs extends readonly ArgDeclaration[] = readonly ArgDeclaration[],
   TReturns extends readonly ArgDeclaration[] = readonly ArgDeclaration[]
 > = {
   id: string;
   name: string;
-  args: TArgs;
-  returns: TReturns;
+  generics?: TGenerics;
+  args: TArgs | ((...generics: TGenerics) => TArgs);
+  returns: TReturns | ((...generics: TGenerics) => TReturns);
   render: (
     args: MapArgDeclarationsToArgs<TArgs>,
     opts: {
@@ -23,12 +25,13 @@ export type NodeType<
 };
 
 export const nodeType = <
+  const TGenerics extends readonly ArgType[],
   const TArgs extends readonly ArgDeclaration[],
   const TReturns extends readonly ArgDeclaration[]
->(node: NodeType<TArgs, TReturns>): NodeType<TArgs, TReturns> => node;
+>(node: NodeType<TGenerics, TArgs, TReturns>): NodeType<TGenerics, TArgs, TReturns> => node;
 
 type ArgTypeType<T extends ArgType> = T extends ArgType<infer U> ? U : never;
 
 export type MapArgDeclarationsToArgs<TArgs extends readonly ArgDeclaration[]> = { [K in keyof TArgs]: ArgTypeType<TArgs[K]["type"]> };
 
-export type NodeTypeReturnType<T extends NodeType<any, any>> = ReturnType<T["render"]>;
+export type NodeTypeReturnType<T extends NodeType<any, any, any>> = ReturnType<T["render"]>;

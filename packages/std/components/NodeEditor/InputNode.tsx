@@ -1,4 +1,4 @@
-import { Box, FormLabel, Sheet, styled, Tooltip, useTheme } from "@mui/joy";
+import { Box, FormLabel, Sheet, styled, useTheme } from "@mui/joy";
 import { FC, useMemo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
@@ -17,6 +17,8 @@ export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =>
   const nodeVal = useMemo(() =>
     args.find((a): a is NodeValueArg<unknown> => a.to[0] === node.id && "value" in a), [args, node.id]);
 
+  const analysedNode = analysis.nodes[node.id]!;
+
   return (
     <Sheet
       sx={{
@@ -28,21 +30,24 @@ export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =>
     >
       <FormLabel htmlFor="text" sx={{ px: 6, py: 1, textAlign: "center", display: "block" }}>{node.type.name}</FormLabel>
       <Box>
-        <Box sx={{ p: 1, px: 1, position: "relative" }}>
-          <TypeTooltip analysedArg={analysis.nodes[node.id]!.args[0]}>
-            <div>
-              <EditorNodeArgument
-                nodeArg={nodeVal}
-                argDeclaration={{ type: analysis.nodes[node.id]!.args[0].type, name: "Value" }}
-                analysedArg={analysis.nodes[node.id]!.args[0]}
-                setValue={(v, t) => setValue(v, t, [node.id, 0])}
-              />
-            </div>
-          </TypeTooltip>
-        </Box>
-        {node.type.returns.map((a, i) => (
+        {analysedNode.args.map((a, i) => (
           <Box key={i} sx={{ p: 1, px: 1, position: "relative" }}>
-            <Tooltip title={a.type.name} variant="soft" placement="bottom-end">
+            <TypeTooltip analysedArg={a}>
+              <div>
+                <EditorNodeArgument
+                  nodeArg={nodeVal}
+                  argDeclaration={{ type: a.type, name: "Value" }}
+                  analysedArg={a}
+                  setValue={(v, t) => setValue(v, t, [node.id, 0])}
+                />
+              </div>
+            </TypeTooltip>
+          </Box>
+        ))}
+
+        {analysedNode.returns.map((a, i) => (
+          <Box key={i} sx={{ p: 1, px: 1, position: "relative" }}>
+            <TypeTooltip analysedArg={{ type: a }} result>
               <div>
                 <StyledHandle
                   type="source"
@@ -52,7 +57,7 @@ export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =>
                 />
                 <FormLabel sx={{ textAlign: "right", display: "block" }}>{a.name}</FormLabel>
               </div>
-            </Tooltip>
+            </TypeTooltip>
           </Box>
         ))}
       </Box>
