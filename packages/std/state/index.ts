@@ -1,7 +1,7 @@
 import { DependencyList, EffectCallback, useMemo, useRef } from "react";
 
+import { NodeType } from "../lib/nodeType";
 import { useEditorAppStateReducer } from "./useEditorAppStateReducer";
-import { NodeType } from "../nodeTypes/nodeType";
 
 export type MutateState = ReturnType<typeof useEditorAppState>["mutate"];
 

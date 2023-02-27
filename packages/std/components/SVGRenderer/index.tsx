@@ -4,13 +4,14 @@ import { Box, IconButton } from "@mui/joy";
 import { FC, ReactNode, useMemo, useRef } from "react";
 
 import { Output } from "../../nodeTypes";
-import { useMutate, useNodeArgs, useNodes, useNodeState } from "../EditorApp/state/context";
 import { createRenderNode } from "../../renderNode";
+import { useLib, useMutate, useNodeArgs, useNodes, useNodeState } from "../EditorApp/context";
 
 export const SVGRenderer: FC = () => {
   const nodes = useNodes();
   const args = useNodeArgs();
   const nodeState = useNodeState();
+  const lib = useLib();
 
   const { prevEffectList, setNodeState } = useMutate();
 
@@ -51,7 +52,10 @@ export const SVGRenderer: FC = () => {
                 `
               }}
             />
-            {createRenderNode({ nodes, args, nodeState, setNodeState }, { prevEffectList: prevEffectList.current })(output) as ReactNode[]}
+            {createRenderNode(
+              { lib, nodes, args, nodeState, setNodeState },
+              { prevEffectList: prevEffectList.current }
+            )(output) as ReactNode[]}
           </StyledSvg>
         </Box>
 

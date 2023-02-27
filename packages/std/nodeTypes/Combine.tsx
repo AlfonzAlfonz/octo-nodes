@@ -1,5 +1,5 @@
 import { renderableType } from "../argTypes";
-import { nodeType } from "./nodeType";
+import { nodeType } from "../lib/nodeType";
 
 export const Combine = nodeType({
   id: "combine",

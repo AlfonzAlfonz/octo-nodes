@@ -3,10 +3,10 @@ import ScreenRotationAltIcon from "@mui/icons-material/ScreenRotationAlt";
 import { Box, IconButton, Menu, MenuItem, Stack } from "@mui/joy";
 import { FC, useState } from "react";
 
+import { NodeType } from "../../lib/nodeType";
 import { Clone, Combine, Image, Input, Text } from "../../nodeTypes";
 import { Clock } from "../../nodeTypes/Clock";
-import { useMutate } from "../EditorApp/state/context";
-import { NodeType } from "../../nodeTypes/nodeType";
+import { useMutate } from "../EditorApp/context";
 
 export const Toolbar: FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -21,7 +21,7 @@ export const Toolbar: FC = () => {
     setAnchorEl(null);
   };
 
-  const addInput = (node: NodeType<any>) => handleClose(() => {
+  const addInput = (node: NodeType<any, any>) => handleClose(() => {
     addNode(node);
   });
 

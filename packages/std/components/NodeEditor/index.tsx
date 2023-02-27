@@ -1,8 +1,8 @@
 import { styled } from "@mui/joy";
 import { FC, useCallback, useMemo } from "react";
-import ReactFlow, { Background, Controls, Edge, MiniMap, Node, OnConnect, OnEdgesChange, OnNodesChange } from "reactflow";
+import ReactFlow, { Background, Controls, MiniMap, Node, OnConnect, OnEdgesChange, OnNodesChange } from "reactflow";
 
-import { useNodeArgs, useMutate, useNodePosition, useNodes } from "../EditorApp/state/context";
+import { useMutate, useNodeArgs, useNodePosition, useNodes } from "../EditorApp/context";
 import { EditorNode } from "./EditorNode";
 import { InputNode } from "./InputNode";
 import { Toolbar } from "./Toolbar";

@@ -1,8 +1,8 @@
 import { Reducer, useReducer } from "react";
 
-import { Arg, NodeArg, NodeModel } from "../components/EditorApp/model";
+import { NodeType } from "../lib/nodeType";
+import { ArgDeclaration, NodeArg, NodeModel } from "../lib/state";
 import { Clone, Input, Output, Position, Text } from "../nodeTypes";
-import { NodeType } from "../nodeTypes/nodeType";
 
 export type AppState = {
   state: {
@@ -134,7 +134,7 @@ const flatten = <T>(x: T | T[]) => {
   }
 };
 
-const addNode = <const T extends readonly Arg[]>(n: NodeModel[], type: NodeType<T>): NodeModel[] =>
+const addNode = <const T extends readonly ArgDeclaration[]>(n: NodeModel[], type: NodeType<T>): NodeModel[] =>
   [...n as any, { id: getNewId(n), type }];
 
 const addRef = (refs: NodeArg[], from: [number, number], to: [number, number]) =>

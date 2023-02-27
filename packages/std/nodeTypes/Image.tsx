@@ -1,11 +1,12 @@
-import { renderableType, stringType } from "../argTypes";
-import { nodeType } from "./nodeType";
+import { stringType } from "../argTypes";
+import { imageType, ImageTypeValue } from "../argTypes/imageType";
+import { nodeType } from "../lib/nodeType";
 
 export const Image = nodeType({
   id: "image",
   name: "Image",
   args: [{ type: stringType, name: "Src" }],
-  returns: [{ type: renderableType, name: "Output" }],
+  returns: [{ type: imageType, name: "Output" }],
   render: ([src], { useEffect, useState }) => {
     const [data, setData] = useState<string | undefined>();
 
@@ -28,6 +29,6 @@ export const Image = nodeType({
       };
     }, [src]);
 
-    return data ? <image href={data} /> : null;
+    return data ? new ImageTypeValue(src, data) : null;
   }
 });

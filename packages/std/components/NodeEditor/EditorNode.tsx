@@ -2,10 +2,10 @@ import { Box, FormControl, FormLabel, Sheet, styled, Tooltip, useTheme } from "@
 import { FC } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { NodeValueArg, NodeModel } from "../EditorApp/model";
-import { useNodeArgs, useMutate } from "../EditorApp/state/context";
 import { renderableType } from "../../argTypes";
+import { NodeModel, NodeValueArg } from "../../lib/state";
 import { Input, Output } from "../../nodeTypes";
+import { useMutate, useNodeArgs } from "../EditorApp/context";
 import { ArgumentInput } from "./ArgumentInput";
 
 export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) => {
@@ -14,7 +14,7 @@ export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =
   const { vars } = useTheme();
 
   const nodeValues = Object.fromEntries(
-    argValues.filter((d): d is NodeValueArg => d.to[0] === node.id && "value" in d).map(d => [d.to[1], d])
+    argValues.filter((d): d is NodeValueArg<unknown> => d.to[0] === node.id && "value" in d).map(d => [d.to[1], d])
   );
 
   return (

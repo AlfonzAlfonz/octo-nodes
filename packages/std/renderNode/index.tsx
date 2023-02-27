@@ -1,10 +1,13 @@
 import { DependencyList, EffectCallback } from "react";
 
-import { NodeArg, NodeModel } from "../components/EditorApp/model";
-import { useMutate } from "../components/EditorApp/state/context";
-import { areHookInputsEqual, validateValue } from "../utils";
+import { validateValue } from "../argTypes/utils";
+import { useMutate } from "../components/EditorApp/context";
+import { OctoNodesLib } from "../lib";
+import { NodeArg, NodeModel } from "../lib/state";
+import { areHookInputsEqual } from "../utils";
 
 type RenderInputState = {
+  lib: OctoNodesLib;
   nodes: NodeModel[];
   args: NodeArg[];
   nodeState: Record<string, { value: unknown }>;
@@ -18,11 +21,20 @@ type RenderInternals = {
 export const createRenderNode = (state: RenderInputState, internals: RenderInternals) => (node: NodeModel): unknown[] => {
   const evaluatedArgs = node.type.args.map((argDeclaration, i) => {
     const ref = state.args.find(a => a.to[0] === node.id && a.to[1] === i);
-    const value = !ref ? undefined : "value" in ref
-      ? ref.value
-      : createRenderNode(state, internals)(state.nodes.find(n => n.id === ref.from[0])!)[ref.from[1]];
 
-    return validateValue(argDeclaration, value) ?? null;
+    if (!ref) return null;
+
+    if ("value" in ref) {
+      return validateValue(argDeclaration.type, argDeclaration.type, ref.value, state.lib);
+    }
+
+    const fromNode = state.nodes.find(n => n.id === ref.from[0])!;
+
+    const nodeValue = createRenderNode(state, internals)(fromNode);
+
+    const value = nodeValue[ref.from[1]];
+
+    return validateValue(fromNode.type.returns[ref.from[1]].type, argDeclaration.type, value, state.lib);
   });
 
   let effect: [EffectCallback, DependencyList] | undefined;

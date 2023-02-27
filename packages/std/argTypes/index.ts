@@ -1,6 +1,6 @@
 import { isValidElement, ReactNode } from "react";
 
-import { ArgType, argType } from "./argType";
+import { ArgType, argType } from "../lib/argType";
 
 export const neverType = argType<never>({
   id: "never",
@@ -68,13 +68,9 @@ export const renderableType = argType<ReactNode>({
   id: "renderable",
   name: "Renderable",
   color: "white",
-  includes: unionType(numberType, stringType, boolType, arrayType(unionType(numberType, stringType, boolType))),
+  includes: unionType(
+    unionType(numberType, stringType, boolType),
+    arrayType(unionType(numberType, stringType, boolType))
+  ),
   testValue: x => x === null || x === undefined || isValidElement(x)
-});
-
-export const anyType = argType<unknown>({
-  id: "never",
-  name: "Never",
-  color: "cyan",
-  includes: [neverType, boolType, intType, numberType, stringType, renderableType]
 });

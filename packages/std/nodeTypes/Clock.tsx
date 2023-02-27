@@ -1,5 +1,5 @@
 import { numberType } from "../argTypes";
-import { nodeType } from "./nodeType";
+import { nodeType } from "../lib/nodeType";
 
 export const Clock = nodeType({
   id: "clock",

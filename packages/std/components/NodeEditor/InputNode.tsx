@@ -2,10 +2,10 @@ import { Box, FormControl, FormLabel, Sheet, styled, Tooltip, useTheme } from "@
 import { FC, useMemo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { NodeModel, NodeValueArg } from "../EditorApp/model";
-import { useMutate, useNodeArgs } from "../EditorApp/state/context";
 import { renderableType, stringType } from "../../argTypes";
 import { ArgumentInput } from "./ArgumentInput";
+import { NodeModel, NodeValueArg } from "../../lib/state";
+import { useMutate, useNodeArgs } from "../EditorApp/context";
 
 export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) => {
   const args = useNodeArgs();
@@ -13,7 +13,7 @@ export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =>
   const { vars } = useTheme();
 
   const nodeVal = useMemo(() =>
-    args.find((a): a is NodeValueArg => a.to[0] === node.id && "value" in a), [args, node.id]);
+    args.find((a): a is NodeValueArg<unknown> => a.to[0] === node.id && "value" in a), [args, node.id]);
 
   return (
     <Sheet
