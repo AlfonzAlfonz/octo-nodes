@@ -27,7 +27,8 @@ export const validateValue = <T extends unknown>(
     }
   }
 
-  return null;
+  // TODO: enable type runtime value checking
+  return value as any;
 };
 
 export const isSubType = <T>(
