@@ -3,8 +3,8 @@ import { FC, useMemo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
 import { renderableType } from "../../argTypes";
-import { NodeModel, NodeValueArg } from "../../lib/state";
-import { useMutate, useNodeArgs, useTypeAnalysis } from "../EditorApp/context";
+import { NodeModel, NodeValueArg } from "../../lib";
+import { useMutate, useNodeArgs, useTypeAnalysis } from "../OctoNodesProvider";
 import { TypeTooltip } from "./EditorNode";
 import { EditorNodeArgument } from "./EditorNodeArgument";
 

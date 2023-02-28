@@ -1,5 +1,5 @@
 import { intType, numberType, renderableType } from "../argTypes";
-import { nodeType } from "../lib/nodeType";
+import { nodeType } from "../lib";
 
 export const Clone = nodeType({
   id: "clone",

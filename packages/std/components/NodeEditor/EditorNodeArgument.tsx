@@ -5,10 +5,9 @@ import { FC } from "react";
 
 import { numberType, stringType } from "../../argTypes";
 import { isSubType, validateValue } from "../../argTypes/utils";
-import { ArgType } from "../../lib/argType";
-import { ArgDeclaration, NodeArg, NodeValueArg } from "../../lib/state";
+import { ArgDeclaration, ArgType, NodeArg, NodeValueArg } from "../../lib";
 import { AnalysedArg } from "../../typeAnalysis";
-import { useLib } from "../EditorApp/context";
+import { useLib } from "../OctoNodesProvider";
 
 interface Props<T> {
   argDeclaration: ArgDeclaration<T>;

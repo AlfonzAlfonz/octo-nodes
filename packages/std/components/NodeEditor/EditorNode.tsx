@@ -3,10 +3,10 @@ import { FC, ReactElement } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
 import { resolveGenerics } from "../../argTypes/utils";
-import { NodeModel } from "../../lib/state";
+import { NodeModel } from "../../lib";
 import { Input, Output } from "../../nodeTypes";
 import { AnalysedArg } from "../../typeAnalysis";
-import { useMutate, useNodeArgs, useTypeAnalysis } from "../EditorApp/context";
+import { useMutate, useNodeArgs, useTypeAnalysis } from "../OctoNodesProvider";
 import { EditorNodeArgument } from "./EditorNodeArgument";
 
 export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) => {

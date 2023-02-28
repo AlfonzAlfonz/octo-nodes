@@ -1,12 +1,10 @@
 import { DependencyList, EffectCallback } from "react";
 
 import { resolveGenerics, validateValue } from "../argTypes/utils";
-import { useMutate } from "../components/EditorApp/context";
-import { OctoNodesLib } from "../lib";
-import { NodeArg, NodeModel } from "../lib/state";
+import { useMutate } from "../components/OctoNodesProvider";
+import { NodeArg, NodeModel, NodeType, NodeTypeReturnType, OctoNodesLib } from "../lib";
 import { TypeAnalysis } from "../typeAnalysis";
 import { areHookInputsEqual } from "../utils";
-import { NodeType, NodeTypeReturnType } from "../lib/nodeType";
 
 type RenderInput = {
   lib: OctoNodesLib;

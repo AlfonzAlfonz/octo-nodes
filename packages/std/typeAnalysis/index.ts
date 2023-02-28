@@ -1,7 +1,5 @@
 import { genericPlaceholder, isSubType, resolveGenerics } from "../argTypes/utils";
-import { OctoNodesLib } from "../lib";
-import { ArgType } from "../lib/argType";
-import { NodeArg, NodeModel, NodeValueArg } from "../lib/state";
+import { ArgType, NodeArg, NodeModel, NodeValueArg, OctoNodesLib } from "../lib";
 
 export interface TypeAnalysis {
   nodes: PartialRecord<number, AnalysedNode>;

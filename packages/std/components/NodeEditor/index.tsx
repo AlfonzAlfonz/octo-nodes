@@ -2,7 +2,7 @@ import { styled } from "@mui/joy";
 import { FC, useCallback, useMemo } from "react";
 import ReactFlow, { Background, Controls, MiniMap, Node, OnConnect, OnEdgesChange, OnNodesChange } from "reactflow";
 
-import { useMutate, useNodeArgs, useNodePosition, useNodes } from "../EditorApp/context";
+import { useMutate, useNodeArgs, useUi, useNodes } from "../OctoNodesProvider";
 import { EditorNode } from "./EditorNode";
 import { InputNode } from "./InputNode";
 import { Toolbar } from "./Toolbar";
@@ -15,7 +15,7 @@ const nodeTypes = {
 export const NodeEditor: FC = () => {
   const nodesCtx = useNodes();
   const dataCtx = useNodeArgs();
-  const nodePosition = useNodePosition();
+  const { nodePosition } = useUi();
   const { addRef, removeRef, moveNode } = useMutate();
 
   const nodes = useMemo<Node[]>(() =>

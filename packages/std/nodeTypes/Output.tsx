@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { numberType, renderableType } from "../argTypes";
-import { nodeType } from "../lib/nodeType";
+import { nodeType } from "../lib";
 
 export const Output = nodeType({
   id: "output",

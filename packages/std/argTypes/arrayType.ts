@@ -1,5 +1,5 @@
+import { ArgType, genericArgType } from "../lib";
 import { anyType } from "./anyType";
-import { ArgType, genericArgType } from "../lib/argType";
 
 interface ArrayType {
   <T extends unknown>(type: ArgType<T>): ArgType<T[]>;

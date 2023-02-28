@@ -1,5 +1,5 @@
+import { ArgType, spreadGenericArgType } from "../lib";
 import { anyType } from "./anyType";
-import { ArgType, spreadGenericArgType } from "../lib/argType";
 
 interface UnionType {
   <T extends ArgType[]>(...type: T): ArgType<T[number]>;

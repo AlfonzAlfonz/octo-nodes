@@ -1,14 +1,9 @@
-import { boolType, intType, neverType, numberType, renderableType, stringType } from "../argTypes";
-import { anyType } from "../argTypes/anyType";
-import { arrayType } from "../argTypes/arrayType";
-import { imageImplicitCasts, imageType } from "../argTypes/imageType";
-import { tupleType } from "../argTypes/tupleType";
-import { unionType } from "../argTypes/unionType";
-import { Clone, Image, Input, Output, Position, Text } from "../nodeTypes";
-import { Clock } from "../nodeTypes/Clock";
-import { Combine } from "../nodeTypes/Combine";
-import { ArgType, Cast, GenericArgType, SpreadGenericArgType } from "./argType";
+import { ArgType, GenericArgType, SpreadGenericArgType } from "./argType";
 import { NodeType } from "./nodeType";
+
+export * from "./argType";
+export * from "./nodeType";
+export * from "./state";
 
 export interface OctoNodesLib {
   nodeTypes: NodeType<any, any, any>[];
@@ -18,33 +13,14 @@ export interface OctoNodesLib {
   implicitCasts: Cast<any, unknown>[];
 }
 
-export const stdLib: OctoNodesLib = {
-  nodeTypes: [
-    Clock,
-    Clone,
-    Combine,
-    Image,
-    Input,
-    Output,
-    Position,
-    Text
-  ],
-  argTypes: [
-    neverType,
-    boolType,
-    intType,
-    numberType,
-    stringType,
-    renderableType,
-    imageType,
-    anyType
-  ],
-  genericArgTypes: [
-    arrayType,
-    tupleType,
-    unionType
-  ],
-  implicitCasts: [
-    ...imageImplicitCasts
-  ]
+export type Cast<From, To> = {
+  from: ArgType<From>;
+  to: ArgType<To>;
+
+  cast: (v: From) => To;
 };
+export const implicitCast = <From, To>(
+  from: ArgType<From>,
+  to: ArgType<To>,
+  cast: (v: From) => To
+): Cast<From, To> => ({ from, to, cast });

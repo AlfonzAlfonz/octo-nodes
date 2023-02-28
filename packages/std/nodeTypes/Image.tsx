@@ -1,6 +1,5 @@
-import { stringType } from "../argTypes";
-import { imageType, ImageTypeValue } from "../argTypes/imageType";
-import { nodeType } from "../lib/nodeType";
+import { imageType, ImageTypeValue, stringType } from "../argTypes";
+import { nodeType } from "../lib";
 
 export const Image = nodeType({
   id: "image",

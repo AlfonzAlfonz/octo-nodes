@@ -1,5 +1,5 @@
-import { renderableType } from ".";
-import { argType, implicitCast } from "../lib/argType";
+import { argType, implicitCast } from "../lib";
+import { renderableType } from "./primitives";
 
 export const imageType = argType<ImageTypeValue>({
   id: "image",

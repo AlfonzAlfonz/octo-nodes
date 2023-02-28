@@ -1,14 +1,12 @@
 import { Reducer, useReducer } from "react";
 
-import { ArgType } from "../lib/argType";
-import { NodeType } from "../lib/nodeType";
-import { ArgDeclaration, NodeArg, NodeModel } from "../lib/state";
+import { ArgDeclaration, ArgType, NodeArg, NodeModel, NodeType } from "../lib";
 import { Clone, Image, Input, Output, Position, Text } from "../nodeTypes";
 
 export type AppState = {
   state: {
     nodes: NodeModel[];
-    argValues: NodeArg[];
+    nodeArgs: NodeArg[];
     nodeState: Record<string, { value: unknown }>;
   };
 
@@ -42,14 +40,14 @@ export const useEditorAppStateReducer = () =>
           ...state,
           state: {
             ...state.state,
-            argValues: addRef(state.state.argValues, action.from, action.to)
+            nodeArgs: addRef(state.state.nodeArgs, action.from, action.to)
           }
         };
         case "removeRef": return {
           ...state,
           state: {
             ...state.state,
-            argValues: state.state.argValues.filter(a => "id" in a && a.id === action.id)
+            nodeArgs: state.state.nodeArgs.filter(a => "id" in a && a.id === action.id)
           }
         };
         case "moveNode": return {
@@ -83,7 +81,7 @@ export const useEditorAppStateReducer = () =>
           let updated = false;
 
           // eslint-disable-next-line no-return-assign
-          const result = state.state.argValues.map(d =>
+          const result = state.state.nodeArgs.map(d =>
             d.to[0] === action.to[0] && d.to[1] === action.to[1]
               ? (updated = true, { ...d, value: action.value, type: action.type })
               : d
@@ -93,7 +91,7 @@ export const useEditorAppStateReducer = () =>
             ...state,
             state: {
               ...state.state,
-              argValues: updated
+              nodeArgs: updated
                 ? result
                 : [...result, { value: action.value, to: action.to, type: action.type }]
             }
@@ -120,7 +118,7 @@ const emptyState = (): AppState => {
   return {
     state: {
       nodes: n,
-      argValues: a,
+      nodeArgs: a,
       nodeState: {}
     },
     ui: {

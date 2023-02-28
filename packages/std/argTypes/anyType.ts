@@ -1,4 +1,4 @@
-import { argType } from "../lib/argType";
+import { argType } from "../lib";
 
 export const anyType = argType<unknown>({
   id: "any",

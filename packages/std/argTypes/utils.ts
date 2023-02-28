@@ -1,6 +1,4 @@
-import { OctoNodesLib } from "../lib";
-import { ArgType, ArgTypeId } from "../lib/argType";
-import { ArgDeclaration } from "../lib/state";
+import { ArgDeclaration, ArgType, ArgTypeId, OctoNodesLib } from "../lib";
 import { more } from "../utils";
 
 export const resolveGenerics = <const TArgs extends readonly ArgDeclaration[] = readonly ArgDeclaration[]>(

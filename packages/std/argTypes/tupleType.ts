@@ -1,5 +1,5 @@
+import { ArgType, spreadGenericArgType } from "../lib";
 import { anyType } from "./anyType";
-import { ArgType, spreadGenericArgType } from "../lib/argType";
 
 interface TupleType {
   <T extends unknown[]>(...type: { [K in keyof T]: ArgType<T[K]> }): ArgType<T>;

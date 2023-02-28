@@ -1,3 +1,4 @@
+export * from "./Clock";
 export * from "./Clone";
 export * from "./Combine";
 export * from "./Image";

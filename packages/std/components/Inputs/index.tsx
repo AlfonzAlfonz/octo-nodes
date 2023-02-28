@@ -3,9 +3,9 @@ import { FormControl, Input as FormInput, FormLabel, IconButton, Stack } from "@
 import { FC } from "react";
 
 import { stringType } from "../../argTypes";
-import { NodeValueArg } from "../../lib/state";
+import { NodeValueArg } from "../../lib";
 import { Input } from "../../nodeTypes";
-import { useMutate, useNodeArgs, useNodes } from "../EditorApp/context";
+import { useMutate, useNodeArgs, useNodes } from "../OctoNodesProvider";
 
 export const Inputs: FC = () => {
   const nodes = useNodes();

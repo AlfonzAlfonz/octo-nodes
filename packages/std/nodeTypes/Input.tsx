@@ -1,5 +1,5 @@
-import { anyType } from "../argTypes/anyType";
-import { nodeType } from "../lib/nodeType";
+import { anyType } from "../argTypes";
+import { nodeType } from "../lib";
 
 export const Input = nodeType({
   id: "input",
