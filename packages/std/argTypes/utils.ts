@@ -16,17 +16,27 @@ export const validateValue = <T extends unknown>(
     return value ?? null;
   }
 
+  // TODO: enable type runtime value checking
+  return cast(implicitCasts, from, to, value) ?? value as any ?? null;
+};
+
+export const cast = <T>(
+  implicitCasts: OctoNodesLib["implicitCasts"],
+  from: ArgType<unknown>,
+  to: ArgType<T>,
+  value: unknown
+): T | null => {
+  if (isSubType(to, from, [])) return value as T;
+
   for (const impl of implicitCasts) {
-    if (isSubType(from, impl.from, []) && isSubType(to, impl.to, [])) {
+    if (isSubType(impl.from, from, []) && isSubType(to, impl.to, [])) {
       const converted = impl.cast(value);
       if (to.testValue(converted)) {
         return converted;
       }
     }
   }
-
-  // TODO: enable type runtime value checking
-  return value as any;
+  return null;
 };
 
 export const isSubType = <T>(

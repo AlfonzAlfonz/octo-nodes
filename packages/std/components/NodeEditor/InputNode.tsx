@@ -4,13 +4,14 @@ import { Handle, NodeProps, Position } from "reactflow";
 
 import { renderableType } from "../../argTypes";
 import { NodeModel, NodeValueArg } from "../../lib";
-import { useMutate, useNodeArgs, useTypeAnalysis } from "../OctoNodesProvider";
+import { useMutate, useNodeArgs, useTypeAnalysis, useUi } from "../OctoNodesProvider";
 import { TypeTooltip } from "./EditorNode";
 import { EditorNodeArgument } from "./EditorNodeArgument";
 
-export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) => {
+export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node }) => {
   const args = useNodeArgs();
-  const { setValue } = useMutate();
+  const { setValue, selectNode } = useMutate();
+  const { selectedNode } = useUi();
   const { vars } = useTheme();
   const analysis = useTypeAnalysis();
 
@@ -22,11 +23,12 @@ export const InputNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =>
   return (
     <Sheet
       sx={{
-        borderColor: selected ? vars.palette.text.secondary : vars.palette.divider,
+        borderColor: selectedNode === node.id ? vars.palette.text.secondary : vars.palette.divider,
         borderWidth: "1px",
         borderStyle: "solid",
         borderRadius: vars.radius.sm
       }}
+      onClick={() => selectNode(node.id)}
     >
       <FormLabel htmlFor="text" sx={{ px: 6, py: 1, textAlign: "center", display: "block" }}>{node.type.name}</FormLabel>
       <Box>

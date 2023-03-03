@@ -1,6 +1,6 @@
 import { DependencyList, Dispatch, EffectCallback, MutableRefObject, useMemo, useRef } from "react";
 
-import { ArgType, NodeType, OctoNodesLib } from "../lib";
+import { ArgType, NodeArgId, NodeId, NodeType, OctoNodesLib } from "../lib";
 import { TypeAnalysis, analyseTypes } from "../typeAnalysis";
 import { AppState, AppStateAction, useEditorAppStateReducer } from "./useEditorAppStateReducer";
 
@@ -37,12 +37,14 @@ const mutateFuncs = (
   prevEffectList: MutableRefObject<PrevEffectList>
 ) => {
   const addNode = (node: NodeType) => dispatch({ action: "addNode", node });
-  const moveNode = (id: number, position: { x: number; y: number }) => dispatch({ action: "moveNode", id, position });
-  const setNodeState = (id: number, s: unknown) => dispatch({ action: "setNodeState", id, state: s });
-  const addRef = (from: [id: number, index: number], to: [id: number, index: number]) => dispatch({ action: "addRef", from, to });
-  const removeRef = (id: number) => dispatch({ action: "removeRef", id });
-  const setValue = <T>(value: T, type: ArgType<T>, to: [id: number, index: number]) => dispatch({ action: "setValue", value, type, to });
+  const moveNode = (id: NodeId, position: { x: number; y: number }) => dispatch({ action: "moveNode", id, position });
+  const setNodeState = (id: NodeId, s: unknown) => dispatch({ action: "setNodeState", id, state: s });
+  const addRef = (from: NodeArgId, to: NodeArgId) => dispatch({ action: "addRef", from, to });
+  const removeRef = (from: NodeArgId, to: NodeArgId) => dispatch({ action: "removeRef", from, to });
+  const setValue = <T>(value: T, type: ArgType<T>, to: NodeArgId) => dispatch({ action: "setValue", value, type, to });
   const setTab = (tab: "inputs" | "nodes") => dispatch({ action: "setTab", tab });
+  const previewNode = (id?: NodeId) => dispatch({ action: "previewNode", id });
+  const selectNode = (id?: NodeId) => dispatch({ action: "selectNode", id });
 
   return {
     addNode,
@@ -52,6 +54,8 @@ const mutateFuncs = (
     removeRef,
     setValue,
     setTab,
+    previewNode,
+    selectNode,
     prevEffectList
   };
 };

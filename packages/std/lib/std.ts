@@ -3,6 +3,7 @@ import {
   anyType,
   arrayType,
   boolType,
+  dbgTypeImplicitCasts,
   imageImplicitCasts,
   imageType,
   intType,
@@ -13,7 +14,7 @@ import {
   tupleType,
   unionType
 } from "../argTypes";
-import { Clock, Clone, Combine, Image, Input, Output, Position, Text } from "../nodeTypes";
+import { Clock, Clone, Combine, Image, Input, SvgOutput, Position, Text, svgOutputImplicitCasts } from "../nodeTypes";
 
 export const stdLib: OctoNodesLib = {
   nodeTypes: [
@@ -22,7 +23,7 @@ export const stdLib: OctoNodesLib = {
     Combine,
     Image,
     Input,
-    Output,
+    SvgOutput,
     Position,
     Text
   ],
@@ -42,6 +43,8 @@ export const stdLib: OctoNodesLib = {
     unionType
   ],
   implicitCasts: [
-    ...imageImplicitCasts
+    ...imageImplicitCasts,
+    ...svgOutputImplicitCasts,
+    ...dbgTypeImplicitCasts
   ]
 };

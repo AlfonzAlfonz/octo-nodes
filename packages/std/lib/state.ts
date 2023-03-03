@@ -12,16 +12,22 @@ export type NodeArg = NodeRefArg | NodeValueArg<unknown>;
 export type NodeValueArg<T extends unknown> = {
   type: ArgType<T>;
   value: T;
-  to: [id: number, index: number];
+  to: NodeArgId;
 };
 
 export type NodeRefArg = {
-  id: number;
-  from: [id: number, index: number];
-  to: [id: number, index: number];
+  from: NodeArgId;
+  to: NodeArgId;
 };
 
 export interface NodeModel<T extends NodeType<any, any, any> = NodeType> {
-  id: number;
+  id: NodeId;
   type: T;
 }
+
+declare const nodeId: unique symbol;
+export type NodeId = number & {
+  [nodeId]: "nodeId";
+};
+
+export type NodeArgId = [node: NodeId, index: number];

@@ -1,7 +1,8 @@
 import { Box } from "@mui/joy";
 import { FC, ReactNode, useEffect, useState } from "react";
 
-import { useUi } from "../OctoNodesProvider";
+import { useMutate, useNodes, useUi } from "../OctoNodesProvider";
+import { SvgOutput } from "../../nodeTypes";
 
 interface Props {
   inputs: ReactNode;
@@ -11,8 +12,20 @@ interface Props {
 
 export const Ui: FC<Props> = ({ inputs, editor, preview }) => {
   const ui = useUi();
+  const nodes = useNodes();
+  const { previewNode } = useMutate();
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(true), []);
+
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      if (e.key === " ") {
+        previewNode(nodes.find(n => n.id === ui.selectedNode)!.type.id === SvgOutput.id ? undefined : ui.selectedNode);
+      }
+    };
+    window.addEventListener("keyup", h);
+    return () => window.removeEventListener("keyup", h);
+  }, [nodes, previewNode, ui.selectedNode]);
 
   return (
     <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "100vh" }}>

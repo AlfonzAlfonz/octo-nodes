@@ -12,6 +12,7 @@
     "project": "./tsconfig.json"
   },
   "rules": {
-    "react-hooks/rules-of-hooks": "off"
+    "react-hooks/rules-of-hooks": "off",
+    "@next/next/no-img-element": "off"
   }
 }

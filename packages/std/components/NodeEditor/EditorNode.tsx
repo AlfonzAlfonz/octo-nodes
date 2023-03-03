@@ -4,15 +4,16 @@ import { Handle, NodeProps, Position } from "reactflow";
 
 import { resolveGenerics } from "../../argTypes/utils";
 import { NodeModel } from "../../lib";
-import { Input, Output } from "../../nodeTypes";
+import { Input, SvgOutput } from "../../nodeTypes";
 import { AnalysedArg } from "../../typeAnalysis";
-import { useMutate, useNodeArgs, useTypeAnalysis } from "../OctoNodesProvider";
+import { useMutate, useNodeArgs, useTypeAnalysis, useUi } from "../OctoNodesProvider";
 import { EditorNodeArgument } from "./EditorNodeArgument";
 
-export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) => {
+export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node }) => {
   const argValues = useNodeArgs();
-  const { setValue } = useMutate();
+  const { setValue, selectNode } = useMutate();
   const analysis = useTypeAnalysis();
+  const ui = useUi();
   const { vars } = useTheme();
 
   const nodeValues = Object.fromEntries(
@@ -24,11 +25,12 @@ export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =
   return (
     <Sheet
       sx={{
-        borderColor: selected ? vars.palette.text.secondary : vars.palette.divider,
+        borderColor: ui.selectedNode === node.id ? vars.palette.text.secondary : vars.palette.divider,
         borderWidth: "1px",
         borderStyle: "solid",
         borderRadius: vars.radius.sm
       }}
+      onClick={() => selectNode(node.id)}
     >
       <FormLabel htmlFor="text" sx={{ px: 6, py: 1, textAlign: "center", display: "block" }}>{node.type.name}</FormLabel>
       <Box>
@@ -57,7 +59,7 @@ export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node, selected }) =
             </TypeTooltip>
           </Box>
         ))}
-        {node.type.id !== Output.id && resolveGenerics(node.type.returns, node.type.generics).map((a, i) => (
+        {node.type.id !== SvgOutput.id && resolveGenerics(node.type.returns, node.type.generics).map((a, i) => (
           <Box key={i} sx={{ p: 1, px: 1, position: "relative" }}>
             <TypeTooltip analysedArg={{ type: analysedNode.returns[i] }}>
               <div>
