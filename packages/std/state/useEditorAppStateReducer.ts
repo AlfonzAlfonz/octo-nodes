@@ -6,6 +6,7 @@ import { more } from "../utils";
 import { StateAction, stateReducer } from "./reducers/stateReducer";
 import { UiAction, uiReducer } from "./reducers/uiReducer";
 import { getNewId } from "./utils";
+import { Dataset } from "../nodeTypes/Dataset";
 
 export type AppState = {
   state: {
@@ -40,6 +41,7 @@ const emptyState = (): AppState => {
   n = addNode(n, Input); // 4
   n = addNode(n, Position); // 5
   n = addNode(n, Image); // 6
+  n = addNode(n, Dataset);
 
   let a: NodeArg[] = [];
   a = addRef(a, [4, 0], [3, 0]);

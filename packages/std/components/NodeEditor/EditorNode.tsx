@@ -61,7 +61,7 @@ export const EditorNode: FC<NodeProps<NodeModel>> = ({ data: node }) => {
         ))}
         {node.type.id !== SvgOutput.id && resolveGenerics(node.type.returns, node.type.generics).map((a, i) => (
           <Box key={i} sx={{ p: 1, px: 1, position: "relative" }}>
-            <TypeTooltip analysedArg={{ type: analysedNode.returns[i] }}>
+            <TypeTooltip analysedArg={{ type: analysedNode.returns[i] }} result>
               <div>
                 <StyledHandle
                   type="source"

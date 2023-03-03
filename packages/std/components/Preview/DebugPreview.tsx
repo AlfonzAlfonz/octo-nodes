@@ -49,22 +49,25 @@ export const DebugPreview: FC<Props> = ({ node }) => {
     <>
       <Box
         sx={{
-          height: "100%",
+          height: "100vh",
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          overflow: "scroll",
           p: 5
         }}
       >
         <ErrorBoundary>
-          <Stack spacing={2} sx={{ overflow: "hidden" }}>
+          <Stack spacing={2}>
             {preview.map((p, i) => (
               <Box key={i}>
                 <Box sx={{ color: "white", mb: 1 }}>
                   {resolveGenerics(node.type.returns, node.type.generics)[i].name}
                 </Box>
                 {p instanceof DbgTypeValueContainer
-                  ? <Box sx={{ background: "white", p: 2, color: "black", maxWidth: "100%" }}>{p.value}</Box>
+                  ? (
+                    <Box sx={!p.full ? { background: "white", p: 2, color: "black", maxWidth: "100%" } : {}}>
+                      {p.value}
+                    </Box>
+                  )
                   : p}
               </Box>
             ))}

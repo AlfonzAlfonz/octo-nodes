@@ -20,7 +20,7 @@ export const Ui: FC<Props> = ({ inputs, editor, preview }) => {
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
       if (e.key === " ") {
-        previewNode(nodes.find(n => n.id === ui.selectedNode)!.type.id === SvgOutput.id ? undefined : ui.selectedNode);
+        previewNode(nodes.find(n => n.id === ui.selectedNode)?.type.id === SvgOutput.id ? undefined : ui.selectedNode);
       }
     };
     window.addEventListener("keyup", h);
